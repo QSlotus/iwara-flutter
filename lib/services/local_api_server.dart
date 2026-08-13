@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as shelf_io;
@@ -546,7 +547,7 @@ class LocalApiServer {
         return;
       }
       if (node is! Map) return;
-      final record = Map<String, dynamic>.from(node as Map);
+      final record = Map<String, dynamic>.from(node);
       final name = '${record['name'] ?? record['quality'] ?? record['resolution'] ?? label}'.trim();
 
       // Common Iwara manifest shape: { name, src: { view, download } }

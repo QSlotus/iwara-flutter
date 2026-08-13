@@ -8,7 +8,9 @@ import 'screens/library_screen.dart';
 import 'screens/startup_screen.dart';
 import 'screens/video_screen.dart';
 import 'services/app_controller.dart';
+import 'services/update_service.dart';
 import 'theme.dart';
+import 'utils/update_ui.dart';
 
 /// Used by video player pages to pause when covered by another route.
 final RouteObserver<ModalRoute<void>> routeObserver = RouteObserver<ModalRoute<void>>();
@@ -58,6 +60,37 @@ class RootShell extends StatefulWidget {
 
 class _RootShellState extends State<RootShell> {
   int index = 0;
+  final UpdateService _updateService = UpdateService();
+  bool _updateChecked = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkForUpdatesQuietly();
+    });
+  }
+
+  Future<void> _checkForUpdatesQuietly() async {
+    if (_updateChecked || !mounted) return;
+    _updateChecked = true;
+    try {
+      final result = await _updateService.checkForUpdate();
+      if (!mounted) return;
+      if (!await _updateService.shouldAutoPrompt(result)) return;
+      if (!mounted) return;
+      await presentUpdateCheck(
+        context,
+        service: _updateService,
+        result: result,
+        quietIfNoUpdate: true,
+        markPromptedOnShow: true,
+      );
+    } catch (_) {
+      // Startup update checks should never block the app.
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final pages = const [HomeScreen(), ExploreScreen(), LibraryScreen(), AccountScreen()];

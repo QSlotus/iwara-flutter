@@ -33,6 +33,14 @@ Output:
 build/app/outputs/flutter-apk/app-release.apk
 ```
 
+## Updates
+
+The app checks [GitHub Releases](https://github.com/QSlotus/iwara-flutter/releases/latest) for a newer semver tag than the installed version (pubspec.yaml / Android ersionName).
+
+- Auto prompt after entering the app (at most once per 12 hours / version)
+- Manual **检查更新** button on the Account page
+- Opens the release APK download URL when available
+
 ## CI
 
 GitHub Actions (`.github/workflows/build-android.yml`) on every push/PR to `main`:

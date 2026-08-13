@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 
 import '../models/models.dart';
 import '../services/app_controller.dart';
+import '../services/update_service.dart';
+import '../utils/update_ui.dart';
 import '../utils/helpers.dart';
 import '../widgets/video_card.dart';
 
@@ -25,6 +28,9 @@ class _AccountScreenState extends State<AccountScreen> with TickerProviderStateM
   bool busy = false;
   bool followBusy = false;
   bool edgeBusy = false;
+  bool updateBusy = false;
+  String currentAppVersion = '';
+  final UpdateService updateService = UpdateService();
   String? error;
   Map<String, dynamic>? profile;
   Map<String, dynamic>? currentUser;
@@ -43,6 +49,7 @@ class _AccountScreenState extends State<AccountScreen> with TickerProviderStateM
   @override
   void initState() {
     super.initState();
+    _loadAppVersion();
     authTabs = TabController(length: 2, vsync: this);
     contentTabs = TabController(length: 2, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -359,6 +366,64 @@ class _AccountScreenState extends State<AccountScreen> with TickerProviderStateM
     return text.characters.first.toUpperCase();
   }
 
+
+  Future<void> _loadAppVersion() async {
+    try {
+      final info = await PackageInfo.fromPlatform();
+      if (!mounted) return;
+      setState(() => currentAppVersion = info.version);
+    } catch (_) {
+      // ignore
+    }
+  }
+
+  Future<void> _checkUpdate({bool quiet = false}) async {
+    setState(() => updateBusy = true);
+    try {
+      final result = await updateService.checkForUpdate();
+      if (!mounted) return;
+      await presentUpdateCheck(
+        context,
+        service: updateService,
+        result: result,
+        quietIfNoUpdate: quiet,
+      );
+    } finally {
+      if (mounted) setState(() => updateBusy = false);
+    }
+  }
+
+  Widget _updateCard() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Text('应用更新', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+            const SizedBox(height: 4),
+            Text(
+              '通过 GitHub Releases 检查新版本。',
+              style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 12),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '当前版本: ${currentAppVersion.isEmpty ? '…' : currentAppVersion}',
+              style: const TextStyle(fontFamily: 'monospace'),
+            ),
+            const SizedBox(height: 8),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: FilledButton.tonal(
+                onPressed: updateBusy ? null : () => _checkUpdate(),
+                child: Text(updateBusy ? '检查中…' : '检查更新'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
   Widget _edgeCard(AppController api) {
     final status = edgeStatus;
     final results = status?.results ?? const <EdgeProbeResult>[];
@@ -559,6 +624,8 @@ class _AccountScreenState extends State<AccountScreen> with TickerProviderStateM
                   ),
                   const SizedBox(height: 12),
                   _edgeCard(api),
+                  const SizedBox(height: 12),
+                  _updateCard(),
                   const SizedBox(height: 16),
                 ],
                 if (shown == null || shown.isEmpty)
