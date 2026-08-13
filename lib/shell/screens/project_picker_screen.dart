@@ -43,7 +43,7 @@ class ProjectPickerScreen extends StatelessWidget {
                 const SizedBox(height: 12),
                 _ProjectCard(
                   title: 'Qinav',
-                  subtitle: 'P2：列表 / 搜索 / 详情 / HLS 播放（当前为占位）',
+                  subtitle: '列表 / 搜索 / 详情 / 本地 HLS 代理播放',
                   icon: Icons.video_library_outlined,
                   onTap: () => shell.openModule(DeskModule.qinav),
                 ),

@@ -12,6 +12,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   crypto: ^3.0.6
   http: ^1.2.2
+  html: ^0.15.6
   package_info_plus: ^8.3.0
   intl: ^0.20.2
   path: ^1.9.1

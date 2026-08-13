@@ -37,6 +37,7 @@ class _ShellEdgeScreenState extends State<ShellEdgeScreen> {
   Widget build(BuildContext context) {
     final shell = context.watch<ShellController>();
     final status = shell.edgeStatus;
+    final probing = shell.edgeBusy || status.status == 'probing' || status.status == 'idle';
     final ready = status.status == 'ready' || status.status == 'error';
     final results = status.results;
     final selectedIp = status.selectedIp ?? status.activeIp;
@@ -56,7 +57,7 @@ class _ShellEdgeScreenState extends State<ShellEdgeScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  '首次启动需要完成 Cloudflare 边缘测速并选择强制解析 IP。之后不会自动测速，可在网络设置中重测。',
+                  '首次启动需要完成 Cloudflare 边缘测速并选择强制解析 IP。之后不会自动测速。',
                   style: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
                 ),
                 const SizedBox(height: 20),
@@ -64,6 +65,7 @@ class _ShellEdgeScreenState extends State<ShellEdgeScreen> {
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         if (status.status == 'ready')
                           const Icon(Icons.check_circle, color: Colors.greenAccent)
@@ -84,17 +86,33 @@ class _ShellEdgeScreenState extends State<ShellEdgeScreen> {
                                 status.status == 'ready'
                                     ? '测速完成'
                                     : status.status == 'error'
-                                        ? '测速失败，可使用当前解析'
-                                        : '正在测速…',
+                                        ? '测速失败，可使用当前解析 IP 继续'
+                                        : '正在测速 Cloudflare 边缘节点…',
+                                style: const TextStyle(fontWeight: FontWeight.w600),
                               ),
+                              const SizedBox(height: 4),
                               Text(
-                                '当前 IP: ${status.activeIp}',
-                                style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
+                                probing
+                                    ? '请稍候，这可能需要几秒到十几秒。界面卡在这里是正常的。'
+                                    : '当前 IP: ${status.activeIp}',
+                                style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.75),
+                                  fontSize: 13,
+                                ),
                               ),
-                              if (status.warning != null)
+                              if (!probing)
+                                Text(
+                                  '模式: ${status.selectionMode} · 状态: ${status.status}',
+                                  style: TextStyle(color: Colors.white.withValues(alpha: 0.55), fontSize: 12),
+                                ),
+                              if (status.warning != null) ...[
+                                const SizedBox(height: 4),
                                 Text(status.warning!, style: const TextStyle(color: Colors.amber, fontSize: 12)),
-                              if (shell.edgeError != null)
+                              ],
+                              if (shell.edgeError != null) ...[
+                                const SizedBox(height: 4),
                                 Text(shell.edgeError!, style: const TextStyle(color: Colors.redAccent, fontSize: 12)),
+                              ],
                             ],
                           ),
                         ),
@@ -102,36 +120,48 @@ class _ShellEdgeScreenState extends State<ShellEdgeScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    FilledButton.tonal(
-                      onPressed: shell.edgeBusy ? null : () => shell.runEdgeProbe(force: true),
-                      child: Text(shell.edgeBusy ? '测速中…' : '重新测速'),
+                if (probing) ...[
+                  const SizedBox(height: 24),
+                  const Center(child: SizedBox(width: 40, height: 40, child: CircularProgressIndicator(strokeWidth: 3))),
+                  const SizedBox(height: 12),
+                  Center(
+                    child: Text(
+                      '测速进行中',
+                      style: TextStyle(color: Colors.white.withValues(alpha: 0.8)),
                     ),
-                    const SizedBox(width: 8),
-                    FilledButton(
-                      onPressed: (!ready || entering) ? null : _continue,
-                      child: Text(entering ? '进入…' : '使用此 IP 继续'),
-                    ),
+                  ),
+                ] else ...[
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      FilledButton.tonal(
+                        onPressed: shell.edgeBusy ? null : () => shell.runEdgeProbe(force: true),
+                        child: Text(shell.edgeBusy ? '测速中…' : '重新测速'),
+                      ),
+                      const SizedBox(width: 8),
+                      FilledButton(
+                        onPressed: (!ready || entering) ? null : _continue,
+                        child: Text(entering ? '进入…' : '使用此 IP 继续'),
+                      ),
+                    ],
+                  ),
+                  if (results.isNotEmpty) ...[
+                    const SizedBox(height: 16),
+                    const Text('可选节点', style: TextStyle(fontWeight: FontWeight.w600)),
+                    ...results.map((EdgeProbeResult item) {
+                      final selected = selectedIp == item.ip;
+                      return ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(item.ip, style: const TextStyle(fontFamily: 'monospace')),
+                        subtitle: Text('${item.latencyMs.toStringAsFixed(1)} ms'),
+                        trailing: selected
+                            ? const Icon(Icons.check, color: Colors.greenAccent)
+                            : const Text('使用'),
+                        selected: selected,
+                        onTap: (selecting || shell.edgeBusy) ? null : () => _select(item.ip),
+                      );
+                    }),
                   ],
-                ),
-                if (results.isNotEmpty) ...[
-                  const SizedBox(height: 16),
-                  const Text('可选节点', style: TextStyle(fontWeight: FontWeight.w600)),
-                  ...results.map((EdgeProbeResult item) {
-                    final selected = selectedIp == item.ip;
-                    return ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: Text(item.ip, style: const TextStyle(fontFamily: 'monospace')),
-                      subtitle: Text('${item.latencyMs.toStringAsFixed(1)} ms'),
-                      trailing: selected
-                          ? const Icon(Icons.check, color: Colors.greenAccent)
-                          : const Text('使用'),
-                      selected: selected,
-                      onTap: (selecting || shell.edgeBusy) ? null : () => _select(item.ip),
-                    );
-                  }),
                 ],
               ],
             ),

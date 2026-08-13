@@ -5,6 +5,7 @@ import 'package:signal_desk/core/edge/edge_models.dart';
 import 'package:signal_desk/core/edge/edge_probe.dart';
 import 'package:signal_desk/core/edge/edge_store.dart';
 import 'package:signal_desk/features/iwara/services/app_controller.dart';
+import 'package:signal_desk/features/qinav/services/qinav_controller.dart';
 
 enum DeskModule { iwara, qinav }
 
@@ -19,6 +20,7 @@ class ShellController extends ChangeNotifier {
   ShellPhase phase = ShellPhase.booting;
   DeskModule? activeModule;
   AppController? iwaraController;
+  QinavController? qinavController;
 
   bool edgeBusy = false;
   String? edgeError;
@@ -34,6 +36,9 @@ class ShellController extends ChangeNotifier {
   Future<void> initialize() async {
     phase = ShellPhase.booting;
     notifyListeners();
+    // Let first frame render loading UI before prefs/IO.
+    await Future<void>.delayed(Duration.zero);
+
     _prefs = await SharedPreferences.getInstance();
     _edgeStore = EdgeStore(_prefs!);
 
@@ -52,8 +57,17 @@ class ShellController extends ChangeNotifier {
       return;
     }
 
+    // Show edge screen with spinner/text before probe starts.
     phase = ShellPhase.edgeSetup;
+    edgeStatus = EdgeStatus(
+      status: 'probing',
+      activeIp: EdgeStore.configuredIp,
+      configuredIp: EdgeStore.configuredIp,
+      selectionMode: 'automatic',
+      source: 'probe',
+    );
     notifyListeners();
+    await Future<void>.delayed(Duration.zero);
     await runEdgeProbe();
   }
 
@@ -143,6 +157,10 @@ class ShellController extends ChangeNotifier {
       controller.onExitModule = exitToPicker;
       await controller.initialize();
       iwaraController = controller;
+    } else if (module == DeskModule.qinav) {
+      final controller = QinavController(resolveIp: activeIp, onExitModule: exitToPicker);
+      await controller.initialize();
+      qinavController = controller;
     }
     phase = ShellPhase.module;
     notifyListeners();
@@ -155,26 +173,34 @@ class ShellController extends ChangeNotifier {
   }
 
   Future<void> closeModule({bool notify = true}) async {
-    final controller = iwaraController;
+    final iwara = iwaraController;
+    final qinav = qinavController;
     iwaraController = null;
+    qinavController = null;
     activeModule = null;
-    if (controller != null) {
+    if (iwara != null) {
       try {
-        await controller.disposeModule();
-      } catch (_) {
-        // Best-effort unload.
-      }
-      controller.dispose();
+        await iwara.disposeModule();
+      } catch (_) {}
+      iwara.dispose();
+    }
+    if (qinav != null) {
+      try {
+        await qinav.disposeModule();
+      } catch (_) {}
+      qinav.dispose();
     }
     if (notify) notifyListeners();
   }
 
   @override
   void dispose() {
-    // Fire-and-forget; controller dispose is sync for ChangeNotifier.
-    final controller = iwaraController;
+    final iwara = iwaraController;
+    final qinav = qinavController;
     iwaraController = null;
-    controller?.dispose();
+    qinavController = null;
+    iwara?.dispose();
+    qinav?.dispose();
     super.dispose();
   }
 }
