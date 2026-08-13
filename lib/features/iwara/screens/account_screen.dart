@@ -4,8 +4,8 @@ import 'package:provider/provider.dart';
 
 import '../models/models.dart';
 import '../services/app_controller.dart';
-import '../services/update_service.dart';
-import '../utils/update_ui.dart';
+import 'package:signal_desk/core/update/update_service.dart';
+import 'package:signal_desk/core/update/update_ui.dart';
 import '../utils/helpers.dart';
 import '../widgets/video_card.dart';
 
@@ -393,7 +393,7 @@ class _AccountScreenState extends State<AccountScreen> with TickerProviderStateM
     }
   }
 
-  Widget _updateCard() {
+  Widget _updateCard(AppController api) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -414,9 +414,20 @@ class _AccountScreenState extends State<AccountScreen> with TickerProviderStateM
             const SizedBox(height: 8),
             Align(
               alignment: Alignment.centerLeft,
-              child: FilledButton.tonal(
-                onPressed: updateBusy ? null : () => _checkUpdate(),
-                child: Text(updateBusy ? '检查中…' : '检查更新'),
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  FilledButton.tonal(
+                    onPressed: updateBusy ? null : () => _checkUpdate(),
+                    child: Text(updateBusy ? '检查中…' : '检查更新'),
+                  ),
+                  if (api.onExitModule != null)
+                    OutlinedButton(
+                      onPressed: api.onExitModule,
+                      child: const Text('退出项目'),
+                    ),
+                ],
               ),
             ),
           ],
@@ -625,7 +636,7 @@ class _AccountScreenState extends State<AccountScreen> with TickerProviderStateM
                   const SizedBox(height: 12),
                   _edgeCard(api),
                   const SizedBox(height: 12),
-                  _updateCard(),
+                  _updateCard(api),
                   const SizedBox(height: 16),
                 ],
                 if (shown == null || shown.isEmpty)

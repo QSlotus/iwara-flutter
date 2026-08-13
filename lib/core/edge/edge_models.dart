@@ -1,32 +1,3 @@
-class ApiOperation {
-  ApiOperation({
-    required this.operation,
-    required this.method,
-    required this.host,
-    required this.route,
-    this.scope = 'core',
-    this.body = false,
-  });
-
-  final String operation;
-  final String method;
-  final String host;
-  final String route;
-  final String scope;
-  final bool body;
-
-  factory ApiOperation.fromJson(Map<String, dynamic> json) {
-    return ApiOperation(
-      operation: json['operation'] as String,
-      method: (json['method'] as String? ?? 'GET').toUpperCase(),
-      host: json['host'] as String? ?? 'api.iwara.tv',
-      route: json['route'] as String? ?? '/',
-      scope: json['scope'] as String? ?? 'core',
-      body: json['body'] == true,
-    );
-  }
-}
-
 class EdgeProbeResult {
   EdgeProbeResult({
     required this.ip,
@@ -49,6 +20,16 @@ class EdgeProbeResult {
         'sent': sent,
         'received': received,
       };
+
+  factory EdgeProbeResult.fromJson(Map<String, dynamic> json) {
+    return EdgeProbeResult(
+      ip: '${json['ip'] ?? ''}',
+      latencyMs: (json['latencyMs'] is num) ? (json['latencyMs'] as num).toDouble() : double.tryParse('${json['latencyMs']}') ?? 0,
+      lossRate: (json['lossRate'] is num) ? (json['lossRate'] as num).toDouble() : double.tryParse('${json['lossRate']}') ?? 0,
+      sent: int.tryParse('${json['sent'] ?? 0}') ?? 0,
+      received: int.tryParse('${json['received'] ?? 0}') ?? 0,
+    );
+  }
 }
 
 class EdgeStatus {
@@ -88,11 +69,4 @@ class EdgeStatus {
         'durationMs': durationMs,
         'results': results.map((e) => e.toJson()).toList(),
       };
-}
-
-class PlayableMediaSource {
-  PlayableMediaSource({required this.label, required this.url, this.downloadUrl});
-  final String label;
-  final String url;
-  final String? downloadUrl;
 }

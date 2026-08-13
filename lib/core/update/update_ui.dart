@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../services/update_service.dart';
+import 'update_service.dart';
 
 Future<void> presentUpdateCheck(
   BuildContext context, {

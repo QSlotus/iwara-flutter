@@ -8,15 +8,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/models.dart';
 import '../utils/helpers.dart';
 import 'api_catalog.dart';
-import 'edge_probe.dart';
+import 'package:signal_desk/core/edge/edge_probe.dart';
+import 'package:signal_desk/core/edge/edge_store.dart';
 import 'local_api_server.dart';
 import 'upstream_client.dart';
 
 class AppController extends ChangeNotifier {
-  static const tokenKey = 'iwara-signal-token';
-  static const edgeFirstDoneKey = 'iwara-edge-first-done';
-  static const edgeSelectedIpKey = 'iwara-edge-selected-ip';
-  static const configuredIp = '104.25.243.202';
+  static const tokenKey = 'iwara.token';
+  static const legacyTokenKey = 'iwara-signal-token';
+  static const configuredIp = EdgeStore.configuredIp;
 
   late final ApiCatalog catalog;
   late final UpstreamClient upstream;
@@ -28,6 +28,7 @@ class AppController extends ChangeNotifier {
   bool edgeFirstDone = false;
   String token = '';
   String? lastError;
+  VoidCallback? onExitModule;
 
   String _resolvedSource = '';
   String _resolvedAccess = '';
@@ -40,10 +41,13 @@ class AppController extends ChangeNotifier {
   Future<void> initialize() async {
     try {
       _prefs = await SharedPreferences.getInstance();
-      token = _prefs?.getString(tokenKey) ?? '';
-      edgeFirstDone = _prefs?.getBool(edgeFirstDoneKey) ?? false;
-      final savedIp = (_prefs?.getString(edgeSelectedIpKey) ?? '').trim();
-      final initialIp = savedIp.isNotEmpty ? savedIp : configuredIp;
+      final prefs = _prefs!;
+      final edgeStore = EdgeStore(prefs);
+      final modernToken = (prefs.getString(tokenKey) ?? '').trim();
+      final legacyToken = (prefs.getString(legacyTokenKey) ?? '').trim();
+      token = modernToken.isNotEmpty ? modernToken : legacyToken;
+      edgeFirstDone = edgeStore.firstDone;
+      final initialIp = edgeStore.activeIp;
       catalog = await ApiCatalog.load();
       upstream = UpstreamClient(resolveIp: initialIp);
       server = LocalApiServer(
@@ -53,11 +57,11 @@ class AppController extends ChangeNotifier {
         configuredIp: configuredIp,
       );
       await server.start();
-      if (savedIp.isNotEmpty) {
-        await server.applySavedIp(savedIp, locked: true);
+      if (edgeStore.selectedIp.isNotEmpty) {
+        await server.applySavedIp(edgeStore.selectedIp, locked: true);
       }
-      // Skip startup splash after the first completed edge selection.
-      entered = edgeFirstDone;
+      // Shell owns first-run edge; module always enters main UI.
+      entered = true;
       ready = true;
       notifyListeners();
     } catch (error, stack) {
@@ -70,21 +74,27 @@ class AppController extends ChangeNotifier {
 
   Future<void> refreshEdge() async {
     await server.runEdgeTest(force: true);
+    final prefs = _prefs;
+    if (prefs != null) {
+      await EdgeStore(prefs).setSelectedIp(activeIp);
+    }
     notifyListeners();
   }
 
   Future<void> selectEdgeIp(String ip) async {
     await server.selectIp(ip);
-    await _prefs?.setString(edgeSelectedIpKey, ip.trim());
+    final prefs = _prefs;
+    if (prefs != null) {
+      await EdgeStore(prefs).setSelectedIp(ip);
+    }
     notifyListeners();
   }
 
   Future<void> completeFirstEdgeSetup() async {
     edgeFirstDone = true;
-    await _prefs?.setBool(edgeFirstDoneKey, true);
-    final ip = activeIp.trim();
-    if (ip.isNotEmpty) {
-      await _prefs?.setString(edgeSelectedIpKey, ip);
+    final prefs = _prefs;
+    if (prefs != null) {
+      await EdgeStore(prefs).markFirstDone(ip: activeIp);
     }
     entered = true;
     notifyListeners();
@@ -94,6 +104,14 @@ class AppController extends ChangeNotifier {
     // Prefer completeFirstEdgeSetup() so the IP choice is persisted.
     entered = true;
     notifyListeners();
+  }
+
+  Future<void> disposeModule() async {
+    try {
+      await server.stop();
+    } catch (_) {}
+    ready = false;
+    entered = false;
   }
 
   Future<Map<String, dynamic>?> fetchProfileByHandle(String handle) async {
@@ -121,8 +139,10 @@ class AppController extends ChangeNotifier {
     _resolvedAccess = '';
     if (token.isEmpty) {
       await _prefs?.remove(tokenKey);
+      await _prefs?.remove(legacyTokenKey);
     } else {
       await _prefs?.setString(tokenKey, token);
+      await _prefs?.setString(legacyTokenKey, token);
     }
     notifyListeners();
   }

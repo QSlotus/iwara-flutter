@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'app.dart';
-import 'services/app_controller.dart';
+import 'package:signal_desk/shell/shell_app.dart';
+import 'package:signal_desk/shell/shell_controller.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final controller = AppController();
-  await controller.initialize();
+  final shell = ShellController();
+  await shell.initialize();
   runApp(
     ChangeNotifierProvider.value(
-      value: controller,
-      child: const IwaraApp(),
+      value: shell,
+      child: const SignalDeskApp(),
     ),
   );
 }

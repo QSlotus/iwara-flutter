@@ -4,7 +4,7 @@ import 'dart:math';
 
 import 'package:flutter/services.dart';
 
-import '../models/models.dart';
+import 'edge_models.dart';
 
 class EdgeProbeService {
   Future<List<EdgeProbeResult>> run({

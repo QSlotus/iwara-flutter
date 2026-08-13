@@ -1,73 +1,42 @@
-# Iwara Signal Desk (Flutter)
+# Signal Desk
 
-Android client for browsing Iwara with a local loopback API proxy that forces Cloudflare edge IPs + SNI.
+Multi-source Android shell with **shared Cloudflare forced-IP edge resolve**.
 
-## Features
+| Module | Status |
+|--------|--------|
+| **Iwara** | Full client (migrated, behavior preserved) |
+| **Qinav** | Placeholder in P1; P2 = list/search/detail/HLS play |
 
-- Local loopback API proxy (forced Cloudflare IP + SNI)
-- Edge latency probe and node selection
-- Home / Explore / Library / Account / Video detail
-- Media proxy for thumbnails and playback
+## Architecture
 
-## Requirements
+See [docs/DESIGN.md](docs/DESIGN.md) for the locked design tree.
 
-- Flutter **3.44.9+** (Dart **3.12.2+**)
-- Android SDK / JDK 17 for local Android builds
+`	ext
+lib/
+  shell/           # edge gate + project picker
+  core/edge/       # shared CF probe + IP store
+  core/update/     # GitHub release updates
+  features/iwara/  # Iwara module
+  features/qinav/  # Qinav module (P2)
+`
 
-## Getting started
+## Cold start
 
-```bash
+1. Shared CF edge probe (skipped if IP already locked)
+2. **Always** show project picker
+3. Enter module (hard-unloaded on exit)
+
+## Build
+
+`ash
 flutter pub get
 flutter run
-```
-
-Release APK:
-
-```bash
 flutter build apk --release
-```
+`
 
-Output:
+pplicationId: 	op.qiusyan.signaldesk
 
-```text
-build/app/outputs/flutter-apk/app-release.apk
-```
+## CI / Updates
 
-## Updates
-
-The app checks [GitHub Releases](https://github.com/QSlotus/iwara-flutter/releases/latest) for a newer semver tag than the installed version (pubspec.yaml / Android ersionName).
-
-- Auto prompt after entering the app (at most once per 12 hours / version)
-- Manual **检查更新** button on the Account page
-- Opens the release APK download URL when available
-
-## CI
-
-GitHub Actions (`.github/workflows/build-android.yml`) on every push/PR to `main`:
-
-1. `flutter pub get`
-2. `flutter analyze`
-3. `flutter build apk --release`
-4. Upload `app-release.apk` as a workflow artifact
-
-Pushing a tag like `v0.1.0` also creates a GitHub Release with the APK attached.
-
-## Project layout
-
-```text
-lib/
-  main.dart
-  app.dart
-  models/
-  screens/
-  services/
-  widgets/
-assets/
-  IWARA_API_INDEX.json
-  cloudflare-ip-ranges.txt
-android/
-```
-
-## License
-
-Private use / as-is unless a license file is added later.
+GitHub Actions builds APK on main and publishes on * tags.
+In-app update check uses QSlotus/iwara-flutter releases.

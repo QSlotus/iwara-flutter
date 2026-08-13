@@ -1,5 +1,5 @@
-name: iwara_signal_desk
-description: Iwara Signal Desk Android client with local forced-IP proxy.
+name: signal_desk
+description: Signal Desk multi-source shell with shared Cloudflare forced-IP edge.
 publish_to: "none"
 version: 0.1.0+1
 

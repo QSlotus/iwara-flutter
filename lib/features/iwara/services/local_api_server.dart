@@ -9,7 +9,7 @@ import 'package:shelf_router/shelf_router.dart';
 
 import '../models/models.dart';
 import 'api_catalog.dart';
-import 'edge_probe.dart';
+import 'package:signal_desk/core/edge/edge_probe.dart';
 import 'upstream_client.dart';
 
 class LocalApiServer {

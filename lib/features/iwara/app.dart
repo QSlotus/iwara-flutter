@@ -1,27 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:signal_desk/core/update/update_service.dart';
+import 'package:signal_desk/core/update/update_ui.dart';
+
 import 'screens/account_screen.dart';
 import 'screens/explore_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/library_screen.dart';
-import 'screens/startup_screen.dart';
 import 'screens/video_screen.dart';
 import 'services/app_controller.dart';
-import 'services/update_service.dart';
 import 'theme.dart';
-import 'utils/update_ui.dart';
 
 /// Used by video player pages to pause when covered by another route.
 final RouteObserver<ModalRoute<void>> routeObserver = RouteObserver<ModalRoute<void>>();
 
-class IwaraApp extends StatelessWidget {
-  const IwaraApp({super.key});
+/// Iwara module root. Edge first-run is handled by the Signal Desk shell.
+class IwaraModuleApp extends StatelessWidget {
+  const IwaraModuleApp({super.key, this.onExitModule});
+
+  final VoidCallback? onExitModule;
 
   @override
   Widget build(BuildContext context) {
+    final controller = context.read<AppController>();
+    controller.onExitModule = onExitModule;
+
     return MaterialApp(
-      title: 'Iwara Signal Desk',
+      title: 'Iwara',
       debugShowCheckedModeBanner: false,
       theme: buildAppTheme(),
       navigatorObservers: [routeObserver],
@@ -30,10 +36,7 @@ class IwaraApp extends StatelessWidget {
           if (!controller.ready) {
             return const Scaffold(body: Center(child: CircularProgressIndicator()));
           }
-          if (!controller.entered) {
-            return const StartupScreen();
-          }
-          return const RootShell();
+          return const IwaraRootShell();
         },
       ),
       onGenerateRoute: (settings) {
@@ -52,13 +55,14 @@ class IwaraApp extends StatelessWidget {
   }
 }
 
-class RootShell extends StatefulWidget {
-  const RootShell({super.key});
+class IwaraRootShell extends StatefulWidget {
+  const IwaraRootShell({super.key});
+
   @override
-  State<RootShell> createState() => _RootShellState();
+  State<IwaraRootShell> createState() => _IwaraRootShellState();
 }
 
-class _RootShellState extends State<RootShell> {
+class _IwaraRootShellState extends State<IwaraRootShell> {
   int index = 0;
   final UpdateService _updateService = UpdateService();
   bool _updateChecked = false;
@@ -86,9 +90,7 @@ class _RootShellState extends State<RootShell> {
         quietIfNoUpdate: true,
         markPromptedOnShow: true,
       );
-    } catch (_) {
-      // Startup update checks should never block the app.
-    }
+    } catch (_) {}
   }
 
   @override
