@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
@@ -71,7 +72,6 @@ class _QinavVideoScreenState extends State<QinavVideoScreen> {
       setState(() => error = '无法解析可播放地址');
       return;
     }
-    // Local proxy URL ends with play.m3u8; force HLS format for ExoPlayer.
     final source = api.proxiedPlay(play.url);
     playSource = source;
     final controller = VideoPlayerController.networkUrl(
@@ -101,12 +101,37 @@ class _QinavVideoScreenState extends State<QinavVideoScreen> {
     }
   }
 
+  Future<void> _openFullscreen() async {
+    final current = player;
+    if (current == null || !current.value.isInitialized) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('视频尚未就绪')));
+      return;
+    }
+    await Navigator.of(context).push(
+      PageRouteBuilder(
+        opaque: true,
+        pageBuilder: (_, __, ___) => _QinavFullscreenPage(controller: current),
+        transitionsBuilder: (_, animation, __, child) => FadeTransition(opacity: animation, child: child),
+      ),
+    );
+    if (mounted) setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     final api = context.watch<QinavController>();
     final d = detail;
     return Scaffold(
-      appBar: AppBar(title: Text(d?.title.isNotEmpty == true ? d!.title : '视频 ${widget.vid}')),
+      appBar: AppBar(
+        title: Text(d?.title.isNotEmpty == true ? d!.title : '视频 ${widget.vid}'),
+        actions: [
+          IconButton(
+            tooltip: '全屏',
+            onPressed: playReady ? _openFullscreen : null,
+            icon: const Icon(Icons.fullscreen),
+          ),
+        ],
+      ),
       body: loading
           ? const Center(child: CircularProgressIndicator())
           : ListView(
@@ -139,6 +164,16 @@ class _QinavVideoScreenState extends State<QinavVideoScreen> {
                                   icon: Icon(player!.value.isPlaying ? Icons.pause_circle : Icons.play_circle),
                                 ),
                               ),
+                              Positioned(
+                                right: 8,
+                                bottom: 28,
+                                child: IconButton(
+                                  tooltip: '全屏',
+                                  color: Colors.white,
+                                  onPressed: _openFullscreen,
+                                  icon: const Icon(Icons.fullscreen),
+                                ),
+                              ),
                             ],
                           )
                         : Center(
@@ -157,8 +192,7 @@ class _QinavVideoScreenState extends State<QinavVideoScreen> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                if (error != null)
-                  SelectableText(error!, style: const TextStyle(color: Colors.redAccent)),
+                if (error != null) SelectableText(error!, style: const TextStyle(color: Colors.redAccent)),
                 if (playSource != null) ...[
                   const SizedBox(height: 6),
                   SelectableText(
@@ -203,6 +237,101 @@ class _QinavVideoScreenState extends State<QinavVideoScreen> {
                 ],
               ],
             ),
+    );
+  }
+}
+
+class _QinavFullscreenPage extends StatefulWidget {
+  const _QinavFullscreenPage({required this.controller});
+  final VideoPlayerController controller;
+
+  @override
+  State<_QinavFullscreenPage> createState() => _QinavFullscreenPageState();
+}
+
+class _QinavFullscreenPageState extends State<_QinavFullscreenPage> {
+  bool showControls = true;
+
+  @override
+  void initState() {
+    super.initState();
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    SystemChrome.setPreferredOrientations(const [
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.portraitUp,
+    ]);
+  }
+
+  @override
+  void dispose() {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    SystemChrome.setPreferredOrientations(const [DeviceOrientation.portraitUp]);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final c = widget.controller;
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => setState(() => showControls = !showControls),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Center(
+              child: c.value.isInitialized
+                  ? AspectRatio(aspectRatio: c.value.aspectRatio == 0 ? 16 / 9 : c.value.aspectRatio, child: VideoPlayer(c))
+                  : const CircularProgressIndicator(),
+            ),
+            if (showControls) ...[
+              Align(
+                alignment: Alignment.center,
+                child: IconButton(
+                  iconSize: 64,
+                  color: Colors.white,
+                  onPressed: () {
+                    setState(() {
+                      if (c.value.isPlaying) {
+                        c.pause();
+                      } else {
+                        c.play();
+                      }
+                    });
+                  },
+                  icon: Icon(c.value.isPlaying ? Icons.pause_circle : Icons.play_circle),
+                ),
+              ),
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: MediaQuery.paddingOf(context).bottom + 8,
+                child: VideoProgressIndicator(c, allowScrubbing: true),
+              ),
+              Positioned(
+                top: MediaQuery.paddingOf(context).top + 4,
+                left: 4,
+                child: IconButton(
+                  color: Colors.white,
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.arrow_back),
+                ),
+              ),
+              Positioned(
+                top: MediaQuery.paddingOf(context).top + 4,
+                right: 4,
+                child: IconButton(
+                  color: Colors.white,
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.fullscreen_exit),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
     );
   }
 }

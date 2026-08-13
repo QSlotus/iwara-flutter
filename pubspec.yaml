@@ -1,7 +1,7 @@
 name: signal_desk
 description: Signal Desk multi-source shell with shared Cloudflare forced-IP edge.
 publish_to: "none"
-version: 0.1.0+1
+version: 0.1.1+2
 
 environment:
   sdk: ^3.12.2

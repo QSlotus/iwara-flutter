@@ -255,6 +255,21 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver, 
     await _startPlayer(sources, index < 0 ? 0 : index, autoFallback: false);
   }
 
+  Future<void> _shareVideoId() async {
+    final id = widget.videoId.trim();
+    if (id.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('没有可分享的视频 ID')),
+      );
+      return;
+    }
+    await Clipboard.setData(ClipboardData(text: id));
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('已复制视频 ID: $id')),
+    );
+  }
+
   Future<void> _openFullscreen() async {
     final current = player;
     if (current == null || !current.value.isInitialized) {
@@ -349,6 +364,11 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver, 
       appBar: AppBar(
         title: Text(video == null ? '视频' : '${video!['title'] ?? '视频'}'),
         actions: [
+          IconButton(
+            tooltip: '分享（复制视频 ID）',
+            onPressed: _shareVideoId,
+            icon: const Icon(Icons.share),
+          ),
           IconButton(
             tooltip: '全屏',
             onPressed: player?.value.isInitialized == true ? _openFullscreen : null,

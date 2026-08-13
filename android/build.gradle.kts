@@ -1,7 +1,23 @@
-allprojects {
+﻿allprojects {
     repositories {
-        google()
-        mavenCentral()
+        maven(url = uri("https://maven.aliyun.com/repository/google"))
+        maven(url = uri("https://maven.aliyun.com/repository/central"))
+        maven(url = uri("https://maven.aliyun.com/repository/public"))
+    }
+}
+
+subprojects {
+    buildscript {
+        repositories {
+            maven(url = uri("https://maven.aliyun.com/repository/google"))
+            maven(url = uri("https://maven.aliyun.com/repository/central"))
+            maven(url = uri("https://maven.aliyun.com/repository/public"))
+        }
+    }
+    repositories {
+        maven(url = uri("https://maven.aliyun.com/repository/google"))
+        maven(url = uri("https://maven.aliyun.com/repository/central"))
+        maven(url = uri("https://maven.aliyun.com/repository/public"))
     }
 }
 

@@ -5,26 +5,39 @@ import '../services/app_controller.dart';
 import '../utils/helpers.dart';
 import '../widgets/video_card.dart';
 
+/// Extract an Iwara video id from free text / URL, or null if it looks like a keyword.
+String? parseIwaraVideoId(String raw) {
+  final text = raw.trim();
+  if (text.isEmpty) return null;
+
+  final fromUrl = RegExp(
+    r'(?:iwara\.tv)?/(?:video|videos)/([A-Za-z0-9_-]+)',
+    caseSensitive: false,
+  ).firstMatch(text);
+  if (fromUrl != null) return fromUrl.group(1);
+
+  // Bare id: short alphanumeric token without spaces / CJK.
+  if (RegExp(r'^[A-Za-z0-9_-]{5,40}$').hasMatch(text)) {
+    return text;
+  }
+  return null;
+}
+
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({super.key});
+
   @override
   State<ExploreScreen> createState() => _ExploreScreenState();
 }
 
 class _ExploreScreenState extends State<ExploreScreen> {
   final controller = TextEditingController();
-  String sort = 'newest';
-  int page = 0;
   bool loading = false;
   String? error;
   List<Map<String, dynamic>> videos = const [];
   List<Map<String, dynamic>> users = const [];
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _load());
-  }
+  String sort = 'newest';
+  int page = 0;
 
   @override
   void dispose() {
@@ -32,37 +45,48 @@ class _ExploreScreenState extends State<ExploreScreen> {
     super.dispose();
   }
 
+  Future<void> _openById(String id) async {
+    final videoId = id.trim();
+    if (videoId.isEmpty) return;
+    await Navigator.of(context).pushNamed('/video/$videoId');
+  }
+
   Future<void> _load() async {
     final api = context.read<AppController>();
+    final query = controller.text.trim();
+
+    // Prefer direct open when input is a video id / video URL.
+    final directId = parseIwaraVideoId(query);
+    if (directId != null) {
+      await _openById(directId);
+      return;
+    }
+
     setState(() {
       loading = true;
       error = null;
     });
     try {
-      final query = controller.text.trim();
-      final dynamic videoPayload;
+      late final Object videoPayload;
+      Object? userPayload;
       if (query.isEmpty) {
         videoPayload = await api.callApi('fetchVideos', query: {
-          'limit': 20,
+          'limit': 24,
           'page': page,
-          if (sort != 'newest') 'sort': sort,
+          'sort': sort,
         });
       } else {
         videoPayload = await api.callApi('fetchSearchResults', query: {
-          'type': 'videos',
+          'type': 'video',
           'query': query,
-          'sort': sort == 'newest' ? 'date' : (sort == 'trending' ? 'relevance' : sort),
-          'limit': 20,
+          'limit': 24,
           'page': page,
+          'sort': sort,
         });
-      }
-      dynamic userPayload;
-      if (query.isNotEmpty) {
         userPayload = await api.callApi('fetchSearchResults', query: {
-          'type': 'users',
+          'type': 'user',
           'query': query,
-          'sort': 'relevance',
-          'limit': 5,
+          'limit': 12,
           'page': 0,
         });
       }
@@ -81,6 +105,19 @@ class _ExploreScreenState extends State<ExploreScreen> {
     }
   }
 
+  Future<void> _openIdAction() async {
+    final id = parseIwaraVideoId(controller.text) ?? controller.text.trim();
+    if (id.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('请输入视频 ID 或链接')));
+      return;
+    }
+    if (parseIwaraVideoId(id) == null && !RegExp(r'^[A-Za-z0-9_-]+$').hasMatch(id)) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('无法解析为视频 ID')));
+      return;
+    }
+    await _openById(parseIwaraVideoId(id) ?? id);
+  }
+
   @override
   Widget build(BuildContext context) {
     final api = context.watch<AppController>();
@@ -90,33 +127,64 @@ class _ExploreScreenState extends State<ExploreScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Expanded(
-                  child: TextField(
-                    controller: controller,
-                    decoration: const InputDecoration(hintText: '搜索视频 / 用户', prefixIcon: Icon(Icons.search)),
-                    onSubmitted: (_) {
-                      page = 0;
-                      _load();
-                    },
-                  ),
-                ),
-                const SizedBox(width: 8),
-                DropdownButton<String>(
-                  value: sort,
-                  items: const [
-                    DropdownMenuItem(value: 'newest', child: Text('最新')),
-                    DropdownMenuItem(value: 'trending', child: Text('趋势')),
-                    DropdownMenuItem(value: 'views', child: Text('播放')),
-                    DropdownMenuItem(value: 'likes', child: Text('喜欢')),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: controller,
+                        decoration: const InputDecoration(
+                          hintText: '搜索视频 / 用户，或粘贴视频 ID / 链接',
+                          prefixIcon: Icon(Icons.search),
+                        ),
+                        onSubmitted: (_) {
+                          page = 0;
+                          _load();
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    DropdownButton<String>(
+                      value: sort,
+                      items: const [
+                        DropdownMenuItem(value: 'newest', child: Text('最新')),
+                        DropdownMenuItem(value: 'trending', child: Text('趋势')),
+                        DropdownMenuItem(value: 'views', child: Text('播放')),
+                        DropdownMenuItem(value: 'likes', child: Text('喜欢')),
+                      ],
+                      onChanged: (value) {
+                        if (value == null) return;
+                        setState(() => sort = value);
+                        page = 0;
+                        _load();
+                      },
+                    ),
                   ],
-                  onChanged: (value) {
-                    if (value == null) return;
-                    setState(() => sort = value);
-                    page = 0;
-                    _load();
-                  },
+                ),
+                const SizedBox(height: 8),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      FilledButton.tonalIcon(
+                        onPressed: () {
+                          page = 0;
+                          _load();
+                        },
+                        icon: const Icon(Icons.search, size: 18),
+                        label: const Text('搜索'),
+                      ),
+                      OutlinedButton.icon(
+                        onPressed: _openIdAction,
+                        icon: const Icon(Icons.link, size: 18),
+                        label: const Text('打开视频 ID'),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

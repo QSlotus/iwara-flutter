@@ -5,38 +5,45 @@ Multi-source Android shell with **shared Cloudflare forced-IP edge resolve**.
 | Module | Status |
 |--------|--------|
 | **Iwara** | Full client (migrated, behavior preserved) |
-| **Qinav** | Placeholder in P1; P2 = list/search/detail/HLS play |
+| **Qinav** | List / search / detail / local HLS proxy playback |
 
 ## Architecture
 
 See [docs/DESIGN.md](docs/DESIGN.md) for the locked design tree.
 
-`	ext
+```text
 lib/
-  shell/           # edge gate + project picker
+  shell/           # edge gate + hub (projects / software info)
   core/edge/       # shared CF probe + IP store
-  core/update/     # GitHub release updates
+  core/update/     # GitHub release updates (shell software-info tab)
   features/iwara/  # Iwara module
-  features/qinav/  # Qinav module (P2)
-`
+  features/qinav/  # Qinav module
+```
 
 ## Cold start
 
 1. Shared CF edge probe (skipped if IP already locked)
-2. **Always** show project picker
+2. **Always** show shell hub (project picker + software info tabs)
 3. Enter module (hard-unloaded on exit)
 
 ## Build
 
-`ash
-flutter pub get
-flutter run
-flutter build apk --release
-`
+Use the E: toolchain wrapper so caches stay off C:
 
-pplicationId: 	op.qiusyan.signaldesk
+```powershell
+E:\ccworks\iwara\.flutter-tools\flutter-env.ps1 pub get
+E:\ccworks\iwara\.flutter-tools\flutter-env.ps1 run
+E:\ccworks\iwara\.flutter-tools\flutter-env.ps1 build apk --release
+```
+
+- `applicationId`: `top.qiusyan.signaldesk`
+- Dart package: `signal_desk`
+- Release APK: `build/app/outputs/flutter-apk/app-release.apk`
+
+Android Gradle repositories prefer Aliyun mirrors, with Google/Maven Central as fallback.
 
 ## CI / Updates
 
-GitHub Actions builds APK on main and publishes on * tags.
-In-app update check uses QSlotus/iwara-flutter releases.
+- GitHub Actions builds APK on `main` and publishes on `v*` tags.
+- In-app update check lives on the shell **软件信息** tab (not inside modules).
+- Update source: `QSlotus/iwara-flutter` GitHub Releases.
