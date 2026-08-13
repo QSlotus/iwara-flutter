@@ -1,4 +1,4 @@
-﻿# Iwara Signal Desk (Flutter)
+# Iwara Signal Desk (Flutter)
 
 Android client for browsing Iwara with a local loopback API proxy that forces Cloudflare edge IPs + SNI.
 
