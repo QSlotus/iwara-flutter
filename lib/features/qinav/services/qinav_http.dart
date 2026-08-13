@@ -13,6 +13,7 @@ class QinavHttp {
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
       '(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36';
   static const referer = 'https://www.qinav.com/';
+  static const origin = 'https://www.qinav.com';
 
   static const pinnedHosts = {'qinav.com', 'www.qinav.com'};
 
@@ -67,6 +68,7 @@ class QinavHttp {
         req.followRedirects = false;
         req.headers.set(HttpHeaders.userAgentHeader, ua);
         req.headers.set(HttpHeaders.refererHeader, referer);
+        req.headers.set('Origin', origin);
         req.headers.set(HttpHeaders.acceptHeader, '*/*');
         req.headers.set('Accept-Language', 'zh-CN,zh;q=0.9');
         headers?.forEach((k, v) {
@@ -110,41 +112,51 @@ class QinavHttp {
         client.close(force: true);
       }
     }
-    throw StateError('Too many redirects for ');
+    throw StateError('Too many redirects for $url');
   }
 
-  Future<String> getText(String url, {int retries = 3}) async {
+  Future<String> getText(
+    String url, {
+    int retries = 3,
+    int maxBytes = 8 * 1024 * 1024,
+  }) async {
     Object? last;
     for (var i = 0; i <= retries; i++) {
       try {
-        final r = await request(url);
+        final r = await request(url, maxBytes: maxBytes);
         if (r.status < 400) return utf8.decode(r.body, allowMalformed: true);
-        if (r.status == 404) throw StateError('HTTP 404: ');
-        last = StateError('HTTP : ');
+        if (r.status == 404) throw StateError('HTTP 404: $url');
+        last = StateError('HTTP ${r.status}: $url');
       } catch (e) {
-        if (''.contains('HTTP 404')) rethrow;
+        final msg = '$e';
+        if (msg.contains('HTTP 404')) rethrow;
         last = e;
       }
       await Future<void>.delayed(Duration(milliseconds: 500 * (i + 1)));
     }
-    throw last ?? StateError('request failed: ');
+    throw last ?? StateError('request failed: $url');
   }
 
-  Future<Uint8List> getBuffer(String url, {int retries = 3, int maxBytes = 16 * 1024 * 1024}) async {
+  Future<Uint8List> getBuffer(
+    String url, {
+    int retries = 3,
+    int maxBytes = 16 * 1024 * 1024,
+  }) async {
     Object? last;
     for (var i = 0; i <= retries; i++) {
       try {
         final r = await request(url, maxBytes: maxBytes, timeout: const Duration(seconds: 30));
         if (r.status < 400) return r.body;
-        if (r.status == 404) throw StateError('HTTP 404: ');
-        last = StateError('HTTP : ');
+        if (r.status == 404) throw StateError('HTTP 404: $url');
+        last = StateError('HTTP ${r.status}: $url');
       } catch (e) {
-        if (''.contains('HTTP 404')) rethrow;
+        final msg = '$e';
+        if (msg.contains('HTTP 404')) rethrow;
         last = e;
       }
       await Future<void>.delayed(Duration(milliseconds: 500 * (i + 1)));
     }
-    throw last ?? StateError('request failed: ');
+    throw last ?? StateError('request failed: $url');
   }
 
   Future<({int status, Map<String, String> headers, Uint8List body, String finalUrl})> postForm(
@@ -159,4 +171,3 @@ class QinavHttp {
     );
   }
 }
-

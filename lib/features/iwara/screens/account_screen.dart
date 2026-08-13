@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 
 import '../models/models.dart';
 import '../services/app_controller.dart';
-import 'package:signal_desk/core/update/update_service.dart';
-import 'package:signal_desk/core/update/update_ui.dart';
 import '../utils/helpers.dart';
 import '../widgets/video_card.dart';
 
@@ -28,9 +25,6 @@ class _AccountScreenState extends State<AccountScreen> with TickerProviderStateM
   bool busy = false;
   bool followBusy = false;
   bool edgeBusy = false;
-  bool updateBusy = false;
-  String currentAppVersion = '';
-  final UpdateService updateService = UpdateService();
   String? error;
   Map<String, dynamic>? profile;
   Map<String, dynamic>? currentUser;
@@ -49,7 +43,6 @@ class _AccountScreenState extends State<AccountScreen> with TickerProviderStateM
   @override
   void initState() {
     super.initState();
-    _loadAppVersion();
     authTabs = TabController(length: 2, vsync: this);
     contentTabs = TabController(length: 2, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -367,67 +360,26 @@ class _AccountScreenState extends State<AccountScreen> with TickerProviderStateM
   }
 
 
-  Future<void> _loadAppVersion() async {
-    try {
-      final info = await PackageInfo.fromPlatform();
-      if (!mounted) return;
-      setState(() => currentAppVersion = info.version);
-    } catch (_) {
-      // ignore
-    }
-  }
-
-  Future<void> _checkUpdate({bool quiet = false}) async {
-    setState(() => updateBusy = true);
-    try {
-      final result = await updateService.checkForUpdate();
-      if (!mounted) return;
-      await presentUpdateCheck(
-        context,
-        service: updateService,
-        result: result,
-        quietIfNoUpdate: quiet,
-      );
-    } finally {
-      if (mounted) setState(() => updateBusy = false);
-    }
-  }
-
-  Widget _updateCard(AppController api) {
+  Widget _moduleCard(AppController api) {
+    if (api.onExitModule == null) return const SizedBox.shrink();
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text('应用更新', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+            const Text('项目', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
             const SizedBox(height: 4),
             Text(
-              '通过 GitHub Releases 检查新版本。',
+              '返回 Signal Desk 项目选择页（硬卸载当前模块）。',
               style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 12),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '当前版本: ${currentAppVersion.isEmpty ? '…' : currentAppVersion}',
-              style: const TextStyle(fontFamily: 'monospace'),
             ),
             const SizedBox(height: 8),
             Align(
               alignment: Alignment.centerLeft,
-              child: Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  FilledButton.tonal(
-                    onPressed: updateBusy ? null : () => _checkUpdate(),
-                    child: Text(updateBusy ? '检查中…' : '检查更新'),
-                  ),
-                  if (api.onExitModule != null)
-                    OutlinedButton(
-                      onPressed: api.onExitModule,
-                      child: const Text('退出项目'),
-                    ),
-                ],
+              child: OutlinedButton(
+                onPressed: api.onExitModule,
+                child: const Text('退出项目'),
               ),
             ),
           ],
@@ -435,6 +387,7 @@ class _AccountScreenState extends State<AccountScreen> with TickerProviderStateM
       ),
     );
   }
+
   Widget _edgeCard(AppController api) {
     final status = edgeStatus;
     final results = status?.results ?? const <EdgeProbeResult>[];
@@ -636,7 +589,7 @@ class _AccountScreenState extends State<AccountScreen> with TickerProviderStateM
                   const SizedBox(height: 12),
                   _edgeCard(api),
                   const SizedBox(height: 12),
-                  _updateCard(api),
+                  _moduleCard(api),
                   const SizedBox(height: 16),
                 ],
                 if (shown == null || shown.isEmpty)

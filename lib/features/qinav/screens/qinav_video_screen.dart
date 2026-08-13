@@ -21,6 +21,7 @@ class _QinavVideoScreenState extends State<QinavVideoScreen> {
   QinavPlayback? playback;
   VideoPlayerController? player;
   bool playReady = false;
+  String? playSource;
 
   @override
   void initState() {
@@ -39,10 +40,13 @@ class _QinavVideoScreenState extends State<QinavVideoScreen> {
     setState(() {
       loading = true;
       error = null;
+      playReady = false;
+      playSource = null;
     });
     try {
       final d = await api.fetchDetail(widget.vid);
       final p = await api.fetchPlayback(widget.vid);
+      if (!mounted) return;
       setState(() {
         detail = d;
         playback = p;
@@ -50,6 +54,7 @@ class _QinavVideoScreenState extends State<QinavVideoScreen> {
       });
       await _setupPlayer(api, p);
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         error = '$e';
         loading = false;
@@ -62,22 +67,37 @@ class _QinavVideoScreenState extends State<QinavVideoScreen> {
     player = null;
     playReady = false;
     if (!mounted) return;
-    if (!play.reachable && play.url.isEmpty) {
+    if (play.url.isEmpty) {
       setState(() => error = '无法解析可播放地址');
       return;
     }
-    final source = api.proxiedMaster(play.url);
-    final controller = VideoPlayerController.networkUrl(Uri.parse(source));
+    // Local proxy URL ends with play.m3u8; force HLS format for ExoPlayer.
+    final source = api.proxiedPlay(play.url);
+    playSource = source;
+    final controller = VideoPlayerController.networkUrl(
+      Uri.parse(source),
+      formatHint: VideoFormat.hls,
+      httpHeaders: const {
+        'Accept': '*/*',
+        'User-Agent': 'signal-desk-qinav/0.1',
+      },
+    );
     player = controller;
     try {
       await controller.initialize();
       await controller.setLooping(true);
       await controller.play();
       if (!mounted) return;
-      setState(() => playReady = true);
+      setState(() {
+        playReady = true;
+        error = null;
+      });
     } catch (e) {
       if (!mounted) return;
-      setState(() => error = '播放器初始化失败: $e');
+      setState(() {
+        error = '播放器初始化失败: $e'
+            '${play.reachable ? '' : '\n（CDN 探测未通过，已回退原地址）'}\n源: $source';
+      });
     }
   }
 
@@ -122,16 +142,30 @@ class _QinavVideoScreenState extends State<QinavVideoScreen> {
                             ],
                           )
                         : Center(
-                            child: Text(
-                              error ?? (playback?.reachable == false ? 'CDN 探测失败，已尝试回退原地址' : '准备播放…'),
-                              style: const TextStyle(color: Colors.white70),
-                              textAlign: TextAlign.center,
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Text(
+                                error ??
+                                    (playback?.reachable == false
+                                        ? 'CDN 探测失败，正在尝试原地址…'
+                                        : '准备播放…'),
+                                style: const TextStyle(color: Colors.white70),
+                                textAlign: TextAlign.center,
+                              ),
                             ),
                           ),
                   ),
                 ),
                 const SizedBox(height: 12),
-                if (error != null) Text(error!, style: const TextStyle(color: Colors.redAccent)),
+                if (error != null)
+                  SelectableText(error!, style: const TextStyle(color: Colors.redAccent)),
+                if (playSource != null) ...[
+                  const SizedBox(height: 6),
+                  SelectableText(
+                    '本地代理: $playSource',
+                    style: TextStyle(color: Colors.white.withValues(alpha: 0.45), fontSize: 11),
+                  ),
+                ],
                 if (d != null) ...[
                   Text(d.title, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 6),

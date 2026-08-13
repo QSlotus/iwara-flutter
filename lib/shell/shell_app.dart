@@ -6,8 +6,8 @@ import 'package:signal_desk/features/iwara/app.dart';
 import 'package:signal_desk/features/iwara/services/app_controller.dart';
 import 'package:signal_desk/features/qinav/qinav_module.dart';
 import 'package:signal_desk/features/qinav/services/qinav_controller.dart';
-import 'package:signal_desk/shell/screens/project_picker_screen.dart';
 import 'package:signal_desk/shell/screens/shell_edge_screen.dart';
+import 'package:signal_desk/shell/screens/shell_hub_screen.dart';
 import 'package:signal_desk/shell/shell_controller.dart';
 
 class SignalDeskApp extends StatelessWidget {
@@ -40,7 +40,7 @@ class SignalDeskApp extends StatelessWidget {
               title: 'Signal Desk',
               debugShowCheckedModeBanner: false,
               theme: buildShellTheme(),
-              home: const ProjectPickerScreen(),
+              home: const ShellHubScreen(),
             );
           case ShellPhase.module:
             if (shell.activeModule == DeskModule.iwara && shell.iwaraController != null) {
@@ -59,7 +59,7 @@ class SignalDeskApp extends StatelessWidget {
               title: 'Signal Desk',
               debugShowCheckedModeBanner: false,
               theme: buildShellTheme(),
-              home: const ProjectPickerScreen(),
+              home: const ShellHubScreen(),
             );
         }
       },

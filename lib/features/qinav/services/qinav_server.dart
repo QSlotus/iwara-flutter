@@ -100,6 +100,7 @@ class QinavServer {
     router.get('/api/video/<vid>/play', (Request request, String vid) async {
       try {
         final play = await site.playback(int.parse(vid));
+        final playable = resolvePlayableProxyUrl(play.url);
         return _json({
           'vid': int.parse(vid),
           'master': play.url,
@@ -107,38 +108,47 @@ class QinavServer {
           'variants': [
             for (final v in play.variants) {'bandwidth': v.bandwidth, 'url': v.url},
           ],
-          'proxyMaster':
-              '$baseUrl/api/hls/master?url=${Uri.encodeQueryComponent(play.url)}',
+          'proxyMaster': playable,
+          'proxyPlay': playable,
         });
       } catch (e) {
         return _json({'error': '$e'}, status: 502);
       }
     });
 
-    router.get('/api/hls/master', (Request request) async {
+    // Preferred single entry for ExoPlayer: always returns a media playlist.
+    // .m3u8 suffix helps ExoPlayer format sniffing when formatHint is missing.
+    Future<Response> playHandler(Request request) async {
       try {
-        final master = _safeUrl(request.url.queryParameters['url']);
-        final text = await http.getText(master);
-        return Response.ok(
-          rewriteMaster(text, master),
-          headers: {'content-type': 'application/vnd.apple.mpegurl'},
-        );
+        final source = _safeUrl(request.url.queryParameters['url']);
+        final body = await _mediaPlaylistBody(source);
+        return _m3u8(body);
       } catch (e) {
         return _json({'error': '$e'}, status: 502);
       }
-    });
-    router.get('/api/hls/variant', (Request request) async {
+    }
+
+    Future<Response> mediaHandler(Request request) async {
       try {
-        final variant = _safeUrl(request.url.queryParameters['url']);
-        final text = await http.getText(variant);
-        return Response.ok(
-          rewriteVariant(text, variant),
-          headers: {'content-type': 'application/vnd.apple.mpegurl'},
-        );
+        final source = _safeUrl(request.url.queryParameters['url']);
+        final text = await http.getText(source, maxBytes: 4 * 1024 * 1024);
+        // Nested master is rare but flatten just in case.
+        final body = isMasterPlaylist(text)
+            ? await _mediaPlaylistBody(source)
+            : rewriteMedia(text, source, baseUrl);
+        return _m3u8(body);
       } catch (e) {
         return _json({'error': '$e'}, status: 502);
       }
-    });
+    }
+
+    router.get('/api/hls/play', playHandler);
+    router.get('/api/hls/play.m3u8', playHandler);
+    router.get('/api/hls/master', playHandler);
+    router.get('/api/hls/master.m3u8', playHandler);
+    router.get('/api/hls/media', mediaHandler);
+    router.get('/api/hls/media.m3u8', mediaHandler);
+    router.get('/api/hls/variant', mediaHandler);
     router.get('/api/hls/seg', (Request request) => _proxyBinary(request, 'video/mp2t'));
     router.get('/api/hls/key', (Request request) => _proxyBinary(request, 'application/octet-stream'));
     router.get('/api/img', (Request request) async {
@@ -158,8 +168,34 @@ class QinavServer {
       }
     });
 
-    final handler = const Pipeline().addMiddleware(logRequests()).addHandler(router.call);
+    final handler = const Pipeline().addHandler(router.call);
     _server = await shelf_io.serve(handler, InternetAddress.loopbackIPv4, qinavLocalPort);
+  }
+
+  /// Flatten master -> best media on the server, expose one stable local URL.
+  String resolvePlayableProxyUrl(String upstreamUrl) {
+    return '$baseUrl/api/hls/play.m3u8?url=${Uri.encodeQueryComponent(upstreamUrl)}';
+  }
+
+  Future<String> _mediaPlaylistBody(String sourceUrl) async {
+    final text = await http.getText(sourceUrl, maxBytes: 4 * 1024 * 1024);
+    if (isMasterPlaylist(text)) {
+      final best = bestVariantUrl(text, sourceUrl);
+      if (best == null) {
+        return rewriteMaster(text, sourceUrl, baseUrl);
+      }
+      final media = await http.getText(best, maxBytes: 4 * 1024 * 1024);
+      // Guard against nested masters.
+      if (isMasterPlaylist(media)) {
+        final nested = bestVariantUrl(media, best);
+        if (nested != null) {
+          final nestedText = await http.getText(nested, maxBytes: 4 * 1024 * 1024);
+          return rewriteMedia(nestedText, nested, baseUrl);
+        }
+      }
+      return rewriteMedia(media, best, baseUrl);
+    }
+    return rewriteMedia(text, sourceUrl, baseUrl);
   }
 
   Future<Response> _list(
@@ -178,8 +214,26 @@ class QinavServer {
   Future<Response> _proxyBinary(Request request, String contentType) async {
     try {
       final url = _safeUrl(request.url.queryParameters['url']);
-      final buf = await http.getBuffer(url);
-      return Response.ok(buf, headers: {'content-type': contentType});
+      final r = await http.request(
+        url,
+        maxBytes: 32 * 1024 * 1024,
+        timeout: const Duration(seconds: 45),
+      );
+      if (r.status >= 400) {
+        return _json({'error': 'upstream ${r.status}'}, status: 502);
+      }
+      final upstreamType = r.headers['content-type'];
+      return Response.ok(
+        r.body,
+        headers: {
+          'content-type': (upstreamType != null && upstreamType.isNotEmpty)
+              ? upstreamType
+              : contentType,
+          'cache-control': 'public, max-age=60',
+          'access-control-allow-origin': '*',
+          'accept-ranges': 'bytes',
+        },
+      );
     } catch (e) {
       return _json({'error': '$e'}, status: 502);
     }
@@ -206,6 +260,17 @@ class QinavServer {
       'likes': item.likes,
       'time': item.time,
     };
+  }
+
+  Response _m3u8(String body) {
+    return Response.ok(
+      body,
+      headers: {
+        'content-type': 'application/vnd.apple.mpegurl',
+        'cache-control': 'no-store',
+        'access-control-allow-origin': '*',
+      },
+    );
   }
 
   Response _json(Object data, {int status = 200}) {

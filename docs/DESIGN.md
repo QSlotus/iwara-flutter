@@ -13,7 +13,7 @@ Captured from the grilling session. Implement against this document.
 | Update checks | Whole-app GitHub Release; source remains `QSlotus/iwara-flutter` for now |
 | Cold start | Shared CF edge resolve (skip probe if IP locked) → **always** project picker |
 | Module switch | Exit to picker; **hard unload** module state/servers |
-| Shell UI | Neutral dark picker; modules keep their own look |
+| Shell UI | Neutral dark hub (projects + about tabs); modules keep own look |
 
 ## Architecture
 
@@ -31,7 +31,7 @@ lib/
 
 ### Shared
 - Cloudflare forced resolve / edge IP / SNI behavior aligned with current Iwara
-- Shell routing, app-level update check
+- Shell hub routing; update check on software-info tab only
 
 ### Not shared
 - Business APIs, shelf route tables, auth sessions
@@ -92,3 +92,7 @@ lib/
 - Q18=A skip re-probe when IP locked
 - Q19=A phased P1 then P2
 - Q20=A Iwara ports unchanged; Qinav separate port
+
+## Shell hub tabs
+- Projects: module entry
+- Software info: version + GitHub Release update check (removed from Iwara account page)

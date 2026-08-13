@@ -123,9 +123,13 @@ class QinavController extends ChangeNotifier {
 
   Future<QinavPlayback> fetchPlayback(int vid) => site.playback(vid);
 
-  String proxiedMaster(String masterUrl) {
-    return '$baseUrl/api/hls/master?url=${Uri.encodeQueryComponent(masterUrl)}';
+  /// Local HLS entry for ExoPlayer. Uses .m3u8 suffix + server-side master flatten.
+  String proxiedPlay(String masterUrl) {
+    return server.resolvePlayableProxyUrl(masterUrl);
   }
+
+  @Deprecated('Use proxiedPlay')
+  String proxiedMaster(String masterUrl) => proxiedPlay(masterUrl);
 
   String proxiedImage(String url) {
     final value = url.trim();
