@@ -1,0 +1,3823 @@
+{
+  "generatedAt": "2026-08-10T04:19:05.147Z",
+  "source": {
+    "bundleUrl": "https://www.iwara.tv/main.838884031a28ff0e346d.js",
+    "resolveIp": "104.25.243.202",
+    "sha256": "f1d34465ea06ba41d9e349782c9bd673e5b3feb7d77714cbe974bd404d658c3b",
+    "bytes": 1212468,
+    "pageRootObservation": "Bare GET / returned Cloudflare 403 challenge during collection; bundle GET returned 200."
+  },
+  "requestContract": {
+    "defaultHost": "api.iwara.tv",
+    "fileHost": "files.iwara.tv",
+    "defaultMethod": "GET",
+    "defaultHeaders": {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    "optionalHeaders": [
+      "Authorization: Bearer <token>",
+      "X-Site: <hostname>",
+      "X-Captcha: <token>"
+    ]
+  },
+  "operations": [
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "actionReIndex",
+      "parameters": [
+        "e"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/admin/actions/reindex",
+      "routeExpression": "\"admin/actions/reindex\"",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\"})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "searchRecreate",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/admin/actions/search-recreate/{t}",
+      "routeExpression": "\"/admin/actions/search-recreate/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\"})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "actionSyncVideos",
+      "parameters": [
+        "e"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/admin/actions/sync-videos",
+      "routeExpression": "\"admin/actions/sync-videos\"",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\"})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "batch",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [
+        {
+          "symbol": "n",
+          "argumentIndex": 2,
+          "default": "{}"
+        }
+      ],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/admin/batch/{t}",
+      "routeExpression": "\"admin/batch/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\",body:n})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "upsertAnnouncement",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/admin/config/announcement",
+      "routeExpression": "\"admin/config/announcement\"",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\",body:t})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "fetchDefcon",
+      "parameters": [
+        "e"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/admin/config/defcon",
+      "routeExpression": "\"admin/config/defcon\"",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c({},f)"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "upsertDefcon",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/admin/config/defcon",
+      "routeExpression": "\"admin/config/defcon\"",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\",body:t})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "upsertZones",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/admin/config/zones",
+      "routeExpression": "\"admin/config/zones\"",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\",body:t})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "fetchDashboard",
+      "parameters": [
+        "e"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/admin/dashboard",
+      "routeExpression": "\"admin/dashboard\"",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c({},f)"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "fetchDonations",
+      "parameters": [
+        "e"
+      ],
+      "optionalParameters": [
+        {
+          "symbol": "t",
+          "argumentIndex": 1,
+          "default": "{}"
+        }
+      ],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/admin/ledger/donations",
+      "routeExpression": "\"admin/ledger/donations\"",
+      "tokenArgument": "e",
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:t})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "fetchDonation",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/admin/ledger/donations/{t}",
+      "routeExpression": "\"admin/ledger/donations/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c({},f)"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "fetchPurchases",
+      "parameters": [
+        "e"
+      ],
+      "optionalParameters": [
+        {
+          "symbol": "t",
+          "argumentIndex": 1,
+          "default": "{}"
+        }
+      ],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/admin/ledger/purchases",
+      "routeExpression": "\"admin/ledger/purchases\"",
+      "tokenArgument": "e",
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:t})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "fetchPurchase",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/admin/ledger/purchases/{t}",
+      "routeExpression": "\"admin/ledger/purchases/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c({},f)"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "issueRefund",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/admin/ledger/refund/{t}/{n}",
+      "routeExpression": "\"admin/ledger/refund/\".concat(t,\"/\").concat(n)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\"})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "fetchLedgerStats",
+      "parameters": [
+        "e"
+      ],
+      "optionalParameters": [
+        {
+          "symbol": "t",
+          "argumentIndex": 1,
+          "default": "{}"
+        }
+      ],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/admin/ledger/stats",
+      "routeExpression": "\"admin/ledger/stats\"",
+      "tokenArgument": "e",
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:t})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "fetchTransactions",
+      "parameters": [
+        "e"
+      ],
+      "optionalParameters": [
+        {
+          "symbol": "t",
+          "argumentIndex": 1,
+          "default": "{}"
+        }
+      ],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/admin/ledger/transactions",
+      "routeExpression": "\"admin/ledger/transactions\"",
+      "tokenArgument": "e",
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:t})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "fetchTransaction",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/admin/ledger/transactions/{t}",
+      "routeExpression": "\"admin/ledger/transactions/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c({},f)"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "fetchLogs",
+      "parameters": [
+        "e"
+      ],
+      "optionalParameters": [
+        {
+          "symbol": "t",
+          "argumentIndex": 1,
+          "default": "{}"
+        }
+      ],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/admin/logs",
+      "routeExpression": "\"admin/logs\"",
+      "tokenArgument": "e",
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:t})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "rejectReview",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "DELETE",
+      "host": "api.iwara.tv",
+      "route": "/admin/review/{t}",
+      "routeExpression": "\"admin/review/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"DELETE\"})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "approveReview",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/admin/review/{t}",
+      "routeExpression": "\"admin/review/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\"})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "fetchReviewList",
+      "parameters": [
+        "e"
+      ],
+      "optionalParameters": [
+        {
+          "symbol": "t",
+          "argumentIndex": 1,
+          "default": "{}"
+        }
+      ],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/admin/reviews",
+      "routeExpression": "\"admin/reviews\"",
+      "tokenArgument": "e",
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:t})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "fetchSearch",
+      "parameters": [
+        "e"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/admin/search",
+      "routeExpression": "\"admin/search\"",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c({},f)"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "fetchServiceStatus",
+      "parameters": [
+        "e"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/admin/services",
+      "routeExpression": "\"admin/services\"",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c({},f)"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "purgeUser",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "DELETE",
+      "host": "api.iwara.tv",
+      "route": "/admin/user/{t}",
+      "routeExpression": "\"admin/user/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"DELETE\"})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "fetchUserDetail",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/admin/user/{t}",
+      "routeExpression": "\"admin/user/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c({},f)"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "spamPurge",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "DELETE",
+      "host": "api.iwara.tv",
+      "route": "/admin/user/{t}/spam",
+      "routeExpression": "\"admin/user/\".concat(t,\"/spam\")",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"DELETE\",body:n})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "fetchUserList",
+      "parameters": [
+        "e"
+      ],
+      "optionalParameters": [
+        {
+          "symbol": "t",
+          "argumentIndex": 1,
+          "default": "{}"
+        }
+      ],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/admin/users",
+      "routeExpression": "\"admin/users\"",
+      "tokenArgument": "e",
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:t})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "generateVouchers",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/admin/vouchers",
+      "routeExpression": "\"/admin/vouchers\"",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\",body:t})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "fetchPages",
+      "parameters": [
+        "e"
+      ],
+      "optionalParameters": [
+        {
+          "symbol": "t",
+          "argumentIndex": 1,
+          "default": "{}"
+        }
+      ],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/pages",
+      "routeExpression": "\"pages\"",
+      "tokenArgument": "e",
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:t})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "updateProduct",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "PUT",
+      "host": "api.iwara.tv",
+      "route": "/product/{t}",
+      "routeExpression": "\"product/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"PUT\",body:n})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "createProduct",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/products",
+      "routeExpression": "\"products\"",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\",body:t})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "destroyRule",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "DELETE",
+      "host": "api.iwara.tv",
+      "route": "/rule/{t}",
+      "routeExpression": "\"rule/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"DELETE\"})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "updateRule",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "PUT",
+      "host": "api.iwara.tv",
+      "route": "/rule/{t}",
+      "routeExpression": "\"rule/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"PUT\",body:n})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "createRule",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/rules",
+      "routeExpression": "\"rules\"",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\",body:t})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "fetchTagsList",
+      "parameters": [
+        "e"
+      ],
+      "optionalParameters": [
+        {
+          "symbol": "t",
+          "argumentIndex": 1,
+          "default": "{}"
+        }
+      ],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/tags",
+      "routeExpression": "\"tags\"",
+      "tokenArgument": "e",
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:t})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "createTag",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/tags",
+      "routeExpression": "\"tags\"",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\",body:t})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "destroyTag",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "DELETE",
+      "host": "api.iwara.tv",
+      "route": "/tags/{t}",
+      "routeExpression": "\"tags/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"DELETE\"})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "updateTag",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "PUT",
+      "host": "api.iwara.tv",
+      "route": "/tags/{t}",
+      "routeExpression": "\"tags/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"PUT\",body:n})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "migrateTags",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/tags/migrate",
+      "routeExpression": "\"tags/migrate\"",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [
+        "sourceId",
+        "targetId"
+      ],
+      "configExpression": "c(c({},f),{},{method:\"POST\",body:{sourceId:t,targetId:n}})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "fetchTags",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/tags/suggestions",
+      "routeExpression": "\"tags/suggestions\"",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c({},f)"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "rejectTag",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "DELETE",
+      "host": "api.iwara.tv",
+      "route": "/tags/suggestions/{t}",
+      "routeExpression": "\"tags/suggestions/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"DELETE\"})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "approveTag",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/tags/suggestions/{t}",
+      "routeExpression": "\"tags/suggestions/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\"})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "unbanUser",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "DELETE",
+      "host": "api.iwara.tv",
+      "route": "/user/{t}/bans",
+      "routeExpression": "\"user/\".concat(t,\"/bans\")",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"DELETE\"})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "banUser",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/user/{t}/bans",
+      "routeExpression": "\"user/\".concat(t,\"/bans\")",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\",body:n})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "createWarning",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/user/{t}/warnings",
+      "routeExpression": "\"user/\".concat(t,\"/warnings\")",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\",body:n})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "removeJob",
+      "parameters": [
+        "e",
+        "t",
+        "n",
+        "r"
+      ],
+      "optionalParameters": [],
+      "method": "DELETE",
+      "host": "dynamic:a",
+      "route": "/admin/queues/{n}/{r}",
+      "routeExpression": "\"/admin/queues/\".concat(n,\"/\").concat(r)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"DELETE\"})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "fetchJob",
+      "parameters": [
+        "e",
+        "t",
+        "n",
+        "r"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "dynamic:a",
+      "route": "/admin/queues/{n}/{r}",
+      "routeExpression": "\"/admin/queues/\".concat(n,\"/\").concat(r)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c({},f)"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "fetchQueues",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "dynamic:n",
+      "route": "/admin/queues",
+      "routeExpression": "\"/admin/queues\"",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c({},f)"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "fetchQueue",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "dynamic:r",
+      "route": "/admin/queues/{n}",
+      "routeExpression": "\"/admin/queues/\".concat(n)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c({},f)"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "drainQueue",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "dynamic:r",
+      "route": "/admin/queues/{n}/drain",
+      "routeExpression": "\"/admin/queues/\".concat(n,\"/drain\")",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\"})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "pauseQueue",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "dynamic:r",
+      "route": "/admin/queues/{n}/pause",
+      "routeExpression": "\"/admin/queues/\".concat(n,\"/pause\")",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\"})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "resumeQueue",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "dynamic:r",
+      "route": "/admin/queues/{n}/resume",
+      "routeExpression": "\"/admin/queues/\".concat(n,\"/resume\")",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\"})"
+    },
+    {
+      "scope": "admin",
+      "privileged": true,
+      "operation": "fetchFiles",
+      "parameters": [
+        "e"
+      ],
+      "optionalParameters": [
+        {
+          "symbol": "t",
+          "argumentIndex": 1,
+          "default": "{}"
+        }
+      ],
+      "method": "GET",
+      "host": "files.iwara.tv",
+      "route": "/files",
+      "routeExpression": "\"files\"",
+      "tokenArgument": "e",
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:t})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchLikes",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [
+        {
+          "symbol": "n",
+          "argumentIndex": 2,
+          "default": "{}"
+        }
+      ],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/{e}/{t}/likes",
+      "routeExpression": "\"\".concat(e,\"/\").concat(t,\"/likes\")",
+      "tokenArgument": null,
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:n})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchComments",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [
+        {
+          "symbol": "r",
+          "argumentIndex": 3,
+          "default": "0"
+        },
+        {
+          "symbol": "a",
+          "argumentIndex": 4,
+          "default": "{}"
+        }
+      ],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/{t}/{n}/comments",
+      "routeExpression": "\"\".concat(t,\"/\").concat(n,\"/comments\")",
+      "tokenArgument": "e",
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:c(c({},a),{},{page:r})})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "createComment",
+      "parameters": [
+        "e",
+        "t",
+        "n",
+        "r"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/{t}/{n}/comments",
+      "routeExpression": "\"\".concat(t,\"/\").concat(n,\"/comments\")",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\",body:r})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "unlike",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "DELETE",
+      "host": "api.iwara.tv",
+      "route": "/{t}/{n}/like",
+      "routeExpression": "\"\".concat(t,\"/\").concat(n,\"/like\")",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"DELETE\"})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "like",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/{t}/{n}/like",
+      "routeExpression": "\"\".concat(t,\"/\").concat(n,\"/like\")",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\"})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchRelated",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/{t}/{n}/related",
+      "routeExpression": "\"\".concat(t,\"/\").concat(n,\"/related\")",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c({},f)"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "sendView",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [
+        {
+          "symbol": "r",
+          "argumentIndex": 3,
+          "default": "null"
+        }
+      ],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/{t}/{n}/view",
+      "routeExpression": "\"\".concat(t,\"/\").concat(n,\"/view\")",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\",body:r})"
+    },
+    {
+      "scope": "core",
+      "privileged": true,
+      "operation": "fetchVouchers",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/admin/vouchers",
+      "routeExpression": "\"admin/vouchers\"",
+      "tokenArgument": "e",
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:t})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchAutocompleteTags",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/autocomplete/tags",
+      "routeExpression": "\"autocomplete/tags\"",
+      "tokenArgument": "e",
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [
+        "query"
+      ],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:{query:t}})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchAutocompleteUsers",
+      "parameters": [
+        "e"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/autocomplete/users",
+      "routeExpression": "\"autocomplete/users\"",
+      "tokenArgument": null,
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:e})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchCaptcha",
+      "parameters": [
+        "e"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/captcha",
+      "routeExpression": "\"captcha\"",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c({},f)"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "destroyComment",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "DELETE",
+      "host": "api.iwara.tv",
+      "route": "/comment/{t}",
+      "routeExpression": "\"comment/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"DELETE\"})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "updateComment",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "PUT",
+      "host": "api.iwara.tv",
+      "route": "/comment/{t}",
+      "routeExpression": "\"comment/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"PUT\",body:n})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchConfig",
+      "parameters": [
+        "e"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/config",
+      "routeExpression": "\"config\"",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c({},f)"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchMessages",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [
+        {
+          "symbol": "n",
+          "argumentIndex": 2,
+          "default": "{}"
+        }
+      ],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/conversation/{t}/messages",
+      "routeExpression": "\"conversation/\".concat(t,\"/messages\")",
+      "tokenArgument": "e",
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:n})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "createMessage",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/conversation/{t}/messages",
+      "routeExpression": "\"conversation/\".concat(t,\"/messages\")",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\",body:n})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchFavorites",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/favorites/{t}",
+      "routeExpression": "\"favorites/\".concat(t)",
+      "tokenArgument": "e",
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:n})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchForumSections",
+      "parameters": [],
+      "optionalParameters": [
+        {
+          "symbol": "e",
+          "argumentIndex": 0,
+          "default": "null"
+        }
+      ],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/forum",
+      "routeExpression": "\"forum\"",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c({},f)"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "createForumThread",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/forum/{n.section}",
+      "routeExpression": "\"forum/\".concat(null==n?void 0:n.section)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": true,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\",captcha:null!=t?t:null,body:n})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchForumThread",
+      "parameters": [
+        "e",
+        "t",
+        "n",
+        "r"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/forum/{n}/{t}",
+      "routeExpression": "\"forum/\".concat(n,\"/\").concat(t)",
+      "tokenArgument": "e",
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:r})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "destroyForumThread",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "DELETE",
+      "host": "api.iwara.tv",
+      "route": "/forum/{t}",
+      "routeExpression": "\"forum/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"DELETE\"})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchForumSection",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/forum/{t}",
+      "routeExpression": "\"forum/\".concat(t)",
+      "tokenArgument": null,
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:n})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "updateForumThread",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "PUT",
+      "host": "api.iwara.tv",
+      "route": "/forum/{t}",
+      "routeExpression": "\"forum/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"PUT\",body:n})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "createForumReply",
+      "parameters": [
+        "e",
+        "t",
+        "n",
+        "r"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/forum/{t}/reply",
+      "routeExpression": "\"forum/\".concat(t,\"/reply\")",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": true,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\",captcha:null!=n?n:null,body:r})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "destroyForumReply",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "DELETE",
+      "host": "api.iwara.tv",
+      "route": "/forum/post/{t}",
+      "routeExpression": "\"forum/post/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"DELETE\"})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "updateForumReply",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "PUT",
+      "host": "api.iwara.tv",
+      "route": "/forum/post/{t}",
+      "routeExpression": "\"forum/post/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"PUT\",body:n})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchForumThreads",
+      "parameters": [],
+      "optionalParameters": [
+        {
+          "symbol": "e",
+          "argumentIndex": 0,
+          "default": "null"
+        },
+        {
+          "symbol": "t",
+          "argumentIndex": 1,
+          "default": "{}"
+        }
+      ],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/forum/threads",
+      "routeExpression": "\"forum/threads\"",
+      "tokenArgument": "e",
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:t})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "destroyImage",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "DELETE",
+      "host": "api.iwara.tv",
+      "route": "/image/{t}",
+      "routeExpression": "\"image/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"DELETE\"})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchImage",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/image/{t}",
+      "routeExpression": "\"image/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c({},f)"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "updateImage",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "PUT",
+      "host": "api.iwara.tv",
+      "route": "/image/{t}",
+      "routeExpression": "\"image/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"PUT\",body:n})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchImages",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/images",
+      "routeExpression": "\"images\"",
+      "tokenArgument": "e",
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:t})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "createImage",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/images",
+      "routeExpression": "\"images\"",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": true,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\",body:n,captcha:null!=t?t:null})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "destroyMessage",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "DELETE",
+      "host": "api.iwara.tv",
+      "route": "/message/{t}",
+      "routeExpression": "\"message/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"DELETE\"})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchMigrationReference",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/migration/lookup/{e}/{t}",
+      "routeExpression": "\"/migration/lookup/\".concat(e,\"/\").concat(t)",
+      "tokenArgument": null,
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c({},f)"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "setNotificationRead",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/notifications/{t}/read",
+      "routeExpression": "\"notifications/\".concat(t,\"/read\")",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\"})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchPage",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/page/{t}",
+      "routeExpression": "\"page/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c({},f)"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "updatePage",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "PUT",
+      "host": "api.iwara.tv",
+      "route": "/page/{t}",
+      "routeExpression": "\"page/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"PUT\",body:n})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "createPage",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/pages",
+      "routeExpression": "\"pages\"",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\",body:t})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "destroyPlaylist",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "DELETE",
+      "host": "api.iwara.tv",
+      "route": "/playlist/{t}",
+      "routeExpression": "\"playlist/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"DELETE\"})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchPlaylist",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [
+        {
+          "symbol": "n",
+          "argumentIndex": 2,
+          "default": "{}"
+        }
+      ],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/playlist/{t}",
+      "routeExpression": "\"playlist/\".concat(t)",
+      "tokenArgument": "e",
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:n})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "updatePlaylist",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "PUT",
+      "host": "api.iwara.tv",
+      "route": "/playlist/{t}",
+      "routeExpression": "\"playlist/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"PUT\",body:n})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "removeFromPlaylist",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "DELETE",
+      "host": "api.iwara.tv",
+      "route": "/playlist/{t}/{n}",
+      "routeExpression": "\"playlist/\".concat(t,\"/\").concat(n)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"DELETE\"})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "addToPlaylist",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/playlist/{t}/{n}",
+      "routeExpression": "\"playlist/\".concat(t,\"/\").concat(n)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\"})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchPlaylists",
+      "parameters": [
+        "e"
+      ],
+      "optionalParameters": [
+        {
+          "symbol": "t",
+          "argumentIndex": 1,
+          "default": "{}"
+        }
+      ],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/playlists",
+      "routeExpression": "\"playlists\"",
+      "tokenArgument": "e",
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:t})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "createPlaylist",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/playlists",
+      "routeExpression": "\"playlists\"",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\",body:t})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchPoll",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/poll/{t}",
+      "routeExpression": "\"poll/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c({},f)"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "createPollVote",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/poll/{t}/vote/{n}",
+      "routeExpression": "\"poll/\".concat(t,\"/vote/\").concat(n)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\"})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "createPoll",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/polls",
+      "routeExpression": "\"polls\"",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\",body:t})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "destroyPost",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "DELETE",
+      "host": "api.iwara.tv",
+      "route": "/post/{t}",
+      "routeExpression": "\"post/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"DELETE\"})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchPost",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/post/{t}",
+      "routeExpression": "\"post/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c({},f)"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "updatePost",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "PUT",
+      "host": "api.iwara.tv",
+      "route": "/post/{t}",
+      "routeExpression": "\"post/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"PUT\",body:n})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchPosts",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/posts",
+      "routeExpression": "\"posts\"",
+      "tokenArgument": "e",
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:t})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "createPost",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/posts",
+      "routeExpression": "\"posts\"",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": true,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\",captcha:null!=t?t:null,body:n})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchProduct",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/product/{t}",
+      "routeExpression": "\"product/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c({},f)"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "purchaseProduct",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/product/{t}/purchase",
+      "routeExpression": "\"/product/\".concat(t,\"/purchase\")",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\"})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchProducts",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/products",
+      "routeExpression": "\"products\"",
+      "tokenArgument": "e",
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:t})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchProfile",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/profile/{t}",
+      "routeExpression": "\"profile/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c({},f)"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "updateProfile",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "PUT",
+      "host": "api.iwara.tv",
+      "route": "/profile/{t}",
+      "routeExpression": "\"profile/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"PUT\",body:n})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchRule",
+      "parameters": [
+        "e"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/rule/{e}",
+      "routeExpression": "\"rule/\".concat(e)",
+      "tokenArgument": null,
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c({},f)"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchRules",
+      "parameters": [],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/rules",
+      "routeExpression": "\"rules\"",
+      "tokenArgument": null,
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c({},f)"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchSearchResults",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/search",
+      "routeExpression": "\"search\"",
+      "tokenArgument": "e",
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:t})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchTags",
+      "parameters": [],
+      "optionalParameters": [
+        {
+          "symbol": "e",
+          "argumentIndex": 0,
+          "default": "{}"
+        }
+      ],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/tags",
+      "routeExpression": "\"tags\"",
+      "tokenArgument": null,
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:e})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchTag",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/tags/{t}",
+      "routeExpression": "\"tags/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c({},f)"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "suggestTag",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/tags/suggestions",
+      "routeExpression": "\"tags/suggestions\"",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\",body:t})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchTrending",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/trending/{t}",
+      "routeExpression": "\"trending/\".concat(t)",
+      "tokenArgument": "e",
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:n})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchTwitterAuthUrl",
+      "parameters": [],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/twitter/authenticate",
+      "routeExpression": "\"twitter/authenticate\"",
+      "tokenArgument": null,
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c({},f)"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchTwitterAuthCallback",
+      "parameters": [
+        "e"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/twitter/callback",
+      "routeExpression": "\"twitter/callback\"",
+      "tokenArgument": null,
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\",body:e})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchCurrentUser",
+      "parameters": [
+        "e"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/user",
+      "routeExpression": "\"user\"",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c({},f)"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchFollowers",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/user/{e}/followers",
+      "routeExpression": "\"user/\".concat(e,\"/followers\")",
+      "tokenArgument": null,
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:t})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchFollowing",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/user/{e}/following",
+      "routeExpression": "\"user/\".concat(e,\"/following\")",
+      "tokenArgument": null,
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:t})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "destroyUser",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "DELETE",
+      "host": "api.iwara.tv",
+      "route": "/user/{t}",
+      "routeExpression": "\"/user/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"DELETE\"})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "updateUser",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "PUT",
+      "host": "api.iwara.tv",
+      "route": "/user/{t}",
+      "routeExpression": "\"user/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"PUT\",body:n})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchBans",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/user/{t}/bans",
+      "routeExpression": "\"user/\".concat(t,\"/bans\")",
+      "tokenArgument": "e",
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:n})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "unblockUser",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "DELETE",
+      "host": "api.iwara.tv",
+      "route": "/user/{t}/block",
+      "routeExpression": "\"/user/\".concat(t,\"/block\")",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"DELETE\"})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchUserBlockStatus",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/user/{t}/block",
+      "routeExpression": "\"/user/\".concat(t,\"/block\")",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c({},f)"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "blockUser",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/user/{t}/block",
+      "routeExpression": "\"/user/\".concat(t,\"/block\")",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\"})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "requestEmailChange",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/user/{t}/change-email",
+      "routeExpression": "\"/user/\".concat(t,\"/change-email\")",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\",body:n})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchUserContent",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [
+        {
+          "symbol": "r",
+          "argumentIndex": 3,
+          "default": "{}"
+        }
+      ],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/user/{t}/content/{n}",
+      "routeExpression": "\"/user/\".concat(t,\"/content/\").concat(n)",
+      "tokenArgument": "e",
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:r})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchConversations",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [
+        {
+          "symbol": "n",
+          "argumentIndex": 2,
+          "default": "{}"
+        }
+      ],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/user/{t}/conversations",
+      "routeExpression": "\"user/\".concat(t,\"/conversations\")",
+      "tokenArgument": "e",
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:n})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "createConversation",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/user/{t}/conversations",
+      "routeExpression": "\"user/\".concat(t,\"/conversations\")",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\",body:n})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchCooldown",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/user/{t}/cooldown",
+      "routeExpression": "\"user/\".concat(t,\"/cooldown\")",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c({},f)"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "leaveUserCreatorProgram",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "DELETE",
+      "host": "api.iwara.tv",
+      "route": "/user/{t}/creator-program",
+      "routeExpression": "\"/user/\".concat(t,\"/creator-program\")",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"DELETE\"})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchUserCreatorProgramStatus",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/user/{t}/creator-program",
+      "routeExpression": "\"/user/\".concat(t,\"/creator-program\")",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c({},f)"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "joinUserCreatorProgram",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/user/{t}/creator-program",
+      "routeExpression": "\"/user/\".concat(t,\"/creator-program\")",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\"})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "createDonation",
+      "parameters": [
+        "e",
+        "t",
+        "n",
+        "r"
+      ],
+      "optionalParameters": [
+        {
+          "symbol": "a",
+          "argumentIndex": 4,
+          "default": "{}"
+        }
+      ],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/user/{t}/donate",
+      "routeExpression": "\"/user/\".concat(t,\"/donate\")",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [
+        "amount",
+        "message",
+        "source"
+      ],
+      "configExpression": "c(c({},f),{},{method:\"POST\",body:{amount:n,message:r,source:a}})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "destroyFollow",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "DELETE",
+      "host": "api.iwara.tv",
+      "route": "/user/{t}/followers",
+      "routeExpression": "\"/user/\".concat(t,\"/followers\")",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"DELETE\"})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "createFollow",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/user/{t}/followers",
+      "routeExpression": "\"/user/\".concat(t,\"/followers\")",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\"})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "destroyFriend",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "DELETE",
+      "host": "api.iwara.tv",
+      "route": "/user/{t}/friends",
+      "routeExpression": "\"user/\".concat(t,\"/friends\")",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"DELETE\"})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchFriends",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [
+        {
+          "symbol": "n",
+          "argumentIndex": 2,
+          "default": "{}"
+        }
+      ],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/user/{t}/friends",
+      "routeExpression": "\"user/\".concat(t,\"/friends\")",
+      "tokenArgument": "e",
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:n})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "requestFriend",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/user/{t}/friends",
+      "routeExpression": "\"user/\".concat(t,\"/friends\")",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\"})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchFriendRequests",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [
+        {
+          "symbol": "n",
+          "argumentIndex": 2,
+          "default": "{}"
+        }
+      ],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/user/{t}/friends/requests",
+      "routeExpression": "\"/user/\".concat(t,\"/friends/requests\")",
+      "tokenArgument": "e",
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:n})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchFriendStatus",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/user/{t}/friends/status",
+      "routeExpression": "\"/user/\".concat(t,\"/friends/status\")",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c({},f)"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchUserHistory",
+      "parameters": [
+        "e",
+        "t",
+        "n",
+        "r"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/user/{t}/history/{n}",
+      "routeExpression": "\"/user/\".concat(t,\"/history/\").concat(n)",
+      "tokenArgument": "e",
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:r})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchNotifications",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/user/{t}/notifications",
+      "routeExpression": "\"user/\".concat(t,\"/notifications\")",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c({},f)"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "requestPasswordReset",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/user/{t}/reset-password",
+      "routeExpression": "\"/user/\".concat(t,\"/reset-password\")",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\"})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchWarnings",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/user/{t}/warnings",
+      "routeExpression": "\"user/\".concat(t,\"/warnings\")",
+      "tokenArgument": "e",
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:n})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "activateAccount",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/user/activate",
+      "routeExpression": "\"user/activate\"",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\",body:t})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchBlockedUsers",
+      "parameters": [
+        "e"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/user/blocked",
+      "routeExpression": "\"/user/blocked\"",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c({},f)"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchCounts",
+      "parameters": [
+        "e"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/user/counts",
+      "routeExpression": "\"user/counts\"",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c({},f)"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchDashboard",
+      "parameters": [
+        "e"
+      ],
+      "optionalParameters": [
+        {
+          "symbol": "t",
+          "argumentIndex": 1,
+          "default": "{}"
+        }
+      ],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/user/dashboard",
+      "routeExpression": "\"/user/dashboard\"",
+      "tokenArgument": "e",
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:t})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchDonations",
+      "parameters": [
+        "e"
+      ],
+      "optionalParameters": [
+        {
+          "symbol": "t",
+          "argumentIndex": 1,
+          "default": "{}"
+        }
+      ],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/user/donations",
+      "routeExpression": "\"/user/donations\"",
+      "tokenArgument": "e",
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:t})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "forgotPassword",
+      "parameters": [
+        "e"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/user/forgot-password",
+      "routeExpression": "\"user/forgot-password\"",
+      "tokenArgument": null,
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\",body:e})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "login",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/user/login",
+      "routeExpression": "\"user/login\"",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [
+        "email",
+        "password"
+      ],
+      "configExpression": "c(c({},f),{},{method:\"POST\",body:{email:t,password:n}})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "registerAccount",
+      "parameters": [
+        "e",
+        "t",
+        "n",
+        "r"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/user/register",
+      "routeExpression": "\"user/register\"",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": true,
+      "queryFields": [],
+      "bodyFields": [
+        "email",
+        "locale"
+      ],
+      "configExpression": "c(c({},f),{},{method:\"POST\",captcha:null!=t?t:null,body:{email:n,locale:r}})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "resetPassword",
+      "parameters": [
+        "e"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/user/reset-password",
+      "routeExpression": "\"user/reset-password\"",
+      "tokenArgument": null,
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\",body:e})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchAccessToken",
+      "parameters": [
+        "e"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/user/token",
+      "routeExpression": "\"user/token\"",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\"})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchTransactions",
+      "parameters": [
+        "e"
+      ],
+      "optionalParameters": [
+        {
+          "symbol": "t",
+          "argumentIndex": 1,
+          "default": "{}"
+        }
+      ],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/user/transactions",
+      "routeExpression": "\"/user/transactions\"",
+      "tokenArgument": "e",
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:t})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "verifyEmail",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/user/verify-email",
+      "routeExpression": "\"/user/verify-email\"",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\",body:t})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "redeemVoucher",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/user/vouchers",
+      "routeExpression": "\"user/vouchers\"",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\",body:t})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "destroyVideo",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "DELETE",
+      "host": "api.iwara.tv",
+      "route": "/video/{t}",
+      "routeExpression": "\"video/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"DELETE\"})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchVideo",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/video/{t}",
+      "routeExpression": "\"video/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c({},f)"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "updateVideo",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "PUT",
+      "host": "api.iwara.tv",
+      "route": "/video/{t}",
+      "routeExpression": "\"video/\".concat(t)",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"PUT\",body:n})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "fetchVideos",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "api.iwara.tv",
+      "route": "/videos",
+      "routeExpression": "\"videos\"",
+      "tokenArgument": "e",
+      "query": true,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{query:t})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "createVideo",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [],
+      "method": "POST",
+      "host": "api.iwara.tv",
+      "route": "/videos",
+      "routeExpression": "\"videos\"",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": true,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c(c({},f),{},{method:\"POST\",body:n,captcha:null!=t?t:null})"
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "uploadFile",
+      "parameters": [
+        "e",
+        "t",
+        "n"
+      ],
+      "optionalParameters": [
+        {
+          "symbol": "r",
+          "argumentIndex": 3,
+          "default": "null"
+        }
+      ],
+      "method": "POST",
+      "host": "files.iwara.tv",
+      "route": "/{t}",
+      "routeExpression": "t",
+      "tokenArgument": "e",
+      "query": false,
+      "body": true,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [
+        "file"
+      ],
+      "configExpression": "multipart/form-data: FormData field \"file\""
+    },
+    {
+      "scope": "core",
+      "privileged": false,
+      "operation": "processFileProgress",
+      "parameters": [
+        "e",
+        "t"
+      ],
+      "optionalParameters": [],
+      "method": "GET",
+      "host": "files.iwara.tv",
+      "route": "/upload/video/{e}/{t}",
+      "routeExpression": "\"/upload/video/\".concat(e,\"/\").concat(t)",
+      "tokenArgument": null,
+      "query": false,
+      "body": false,
+      "captcha": false,
+      "queryFields": [],
+      "bodyFields": [],
+      "configExpression": "c({},f)"
+    }
+  ],
+  "ancillaryOperations": [
+    {
+      "scope": "auxiliary",
+      "operation": "fetchAdZones",
+      "method": "GET",
+      "host": "service.iwara.tv",
+      "route": "/z/z.php",
+      "parameters": [
+        "zones",
+        "loc"
+      ],
+      "query": true,
+      "body": false,
+      "evidence": "Main bundle constants F/O and direct fetch; response shape verified separately."
+    },
+    {
+      "scope": "runtime-derived",
+      "operation": "fetchSignedFile",
+      "method": "GET",
+      "host": "filesq.iwara.tv",
+      "route": "/file/{fileId}?expires={expires}&hash={hash}[&download={name}]",
+      "parameters": [
+        "fileId",
+        "expires",
+        "hash",
+        "download (optional)"
+      ],
+      "query": true,
+      "body": false,
+      "evidence": "fileUrl in an anonymous GET /video/{id} response; path/query shape recorded without payload values."
+    }
+  ]
+}
