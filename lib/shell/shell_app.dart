@@ -6,6 +6,8 @@ import 'package:signal_desk/features/iwara/app.dart';
 import 'package:signal_desk/features/iwara/services/app_controller.dart';
 import 'package:signal_desk/features/qinav/qinav_module.dart';
 import 'package:signal_desk/features/qinav/services/qinav_controller.dart';
+import 'package:signal_desk/features/xmav/xmav_module.dart';
+import 'package:signal_desk/features/xmav/services/xmav_controller.dart';
 import 'package:signal_desk/shell/screens/shell_edge_screen.dart';
 import 'package:signal_desk/shell/screens/shell_hub_screen.dart';
 import 'package:signal_desk/shell/shell_controller.dart';
@@ -53,6 +55,12 @@ class SignalDeskApp extends StatelessWidget {
               return ChangeNotifierProvider<QinavController>.value(
                 value: shell.qinavController!,
                 child: const QinavModuleApp(),
+              );
+            }
+            if (shell.activeModule == DeskModule.xmav && shell.xmavController != null) {
+              return ChangeNotifierProvider<XmavController>.value(
+                value: shell.xmavController!,
+                child: const XmavModuleApp(),
               );
             }
             return MaterialApp(

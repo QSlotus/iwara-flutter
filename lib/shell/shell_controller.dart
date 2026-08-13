@@ -6,8 +6,9 @@ import 'package:signal_desk/core/edge/edge_probe.dart';
 import 'package:signal_desk/core/edge/edge_store.dart';
 import 'package:signal_desk/features/iwara/services/app_controller.dart';
 import 'package:signal_desk/features/qinav/services/qinav_controller.dart';
+import 'package:signal_desk/features/xmav/services/xmav_controller.dart';
 
-enum DeskModule { iwara, qinav }
+enum DeskModule { iwara, qinav, xmav }
 
 enum ShellPhase { booting, edgeSetup, picker, module }
 
@@ -21,6 +22,7 @@ class ShellController extends ChangeNotifier {
   DeskModule? activeModule;
   AppController? iwaraController;
   QinavController? qinavController;
+  XmavController? xmavController;
 
   bool edgeBusy = false;
   String? edgeError;
@@ -161,6 +163,10 @@ class ShellController extends ChangeNotifier {
       final controller = QinavController(resolveIp: activeIp, onExitModule: exitToPicker);
       await controller.initialize();
       qinavController = controller;
+    } else if (module == DeskModule.xmav) {
+      final controller = XmavController(onExitModule: exitToPicker);
+      await controller.initialize();
+      xmavController = controller;
     }
     phase = ShellPhase.module;
     notifyListeners();
@@ -175,8 +181,10 @@ class ShellController extends ChangeNotifier {
   Future<void> closeModule({bool notify = true}) async {
     final iwara = iwaraController;
     final qinav = qinavController;
+    final xmav = xmavController;
     iwaraController = null;
     qinavController = null;
+    xmavController = null;
     activeModule = null;
     if (iwara != null) {
       try {
@@ -190,6 +198,12 @@ class ShellController extends ChangeNotifier {
       } catch (_) {}
       qinav.dispose();
     }
+    if (xmav != null) {
+      try {
+        await xmav.disposeModule();
+      } catch (_) {}
+      xmav.dispose();
+    }
     if (notify) notifyListeners();
   }
 
@@ -197,10 +211,13 @@ class ShellController extends ChangeNotifier {
   void dispose() {
     final iwara = iwaraController;
     final qinav = qinavController;
+    final xmav = xmavController;
     iwaraController = null;
     qinavController = null;
+    xmavController = null;
     iwara?.dispose();
     qinav?.dispose();
+    xmav?.dispose();
     super.dispose();
   }
 }

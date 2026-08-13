@@ -90,6 +90,13 @@ class _ProjectsTab extends StatelessWidget {
                 icon: Icons.video_library_outlined,
                 onTap: () => shell.openModule(DeskModule.qinav),
               ),
+              const SizedBox(height: 12),
+              _ProjectCard(
+                title: 'Xmav',
+                subtitle: '影视聚合浏览',
+                icon: Icons.live_tv_outlined,
+                onTap: () => shell.openModule(DeskModule.xmav),
+              ),
             ],
           ),
         ),
@@ -260,6 +267,7 @@ class _AboutTabState extends State<_AboutTab> {
                     '模块说明\n'
                     '· Iwara：原有功能保持不变\n'
                     '· Qinav：独立本地代理与播放链路\n'
+                    '· Xmav：影视聚合浏览（直连，无 CF）\n'
                     '退出任一模块后会硬卸载，返回本页。',
                     style: TextStyle(color: Colors.white.withValues(alpha: 0.78), height: 1.45),
                   ),
