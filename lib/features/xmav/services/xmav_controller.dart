@@ -5,7 +5,6 @@ import '../models/models.dart';
 import 'xmav_api.dart';
 import 'xmav_base.dart';
 import 'xmav_http.dart';
-import 'xmav_server.dart';
 
 class XmavController extends ChangeNotifier {
   XmavController({this.onExitModule});
@@ -17,7 +16,6 @@ class XmavController extends ChangeNotifier {
   XmavBaseStore? _store;
   XmavBaseResolver? _resolver;
   XmavApi? api;
-  XmavServer? server;
 
   bool ready = false;
   bool resolvingBase = false;
@@ -56,8 +54,6 @@ class XmavController extends ChangeNotifier {
       _resolver = XmavBaseResolver(http: http, store: _store!);
       base = await _resolver!.resolve(force: false);
       api = XmavApi(http: http, base: base);
-      server = XmavServer(http: http, siteBase: base);
-      await server!.start();
       categories = await api!.loadCategories();
       ready = true;
       resolvingBase = false;
@@ -82,12 +78,6 @@ class XmavController extends ChangeNotifier {
     try {
       base = await _resolver!.resolve(force: force);
       api = XmavApi(http: http, base: base);
-      if (server != null) {
-        server!.siteBase = base;
-      } else {
-        server = XmavServer(http: http, siteBase: base);
-        await server!.start();
-      }
       categories = await api!.loadCategories();
       ready = true;
       resolvingBase = false;
@@ -113,7 +103,7 @@ class XmavController extends ChangeNotifier {
     lastError = null;
     notifyListeners();
     try {
-      final result = await api!.list(page: page, limit: 20);
+      final result = await api!.latest(page: page);
       latestItems = result.items;
       latestPage = result.page;
       latestPageCount = result.pageCount < 1 ? 1 : result.pageCount;
@@ -149,13 +139,7 @@ class XmavController extends ChangeNotifier {
     lastError = null;
     notifyListeners();
     try {
-      final result = await api!.list(
-        page: page,
-        limit: 40,
-        tid: tid,
-        strictTypeId: tid,
-        fillPages: 4,
-      );
+      final result = await api!.categoryList(tid, page: page);
       categoryItems = result.items;
       categoryPage = result.page;
       categoryPageCount = result.pageCount < 1 ? 1 : result.pageCount;
@@ -200,7 +184,7 @@ class XmavController extends ChangeNotifier {
     suggestions = const [];
     notifyListeners();
     try {
-      final result = await api!.searchHtml(wd, page: page);
+      final result = await api!.search(wd, page: page);
       searchItems = result.items;
       searchPage = result.page;
       searchPageCount = result.pageCount < 1 ? 1 : result.pageCount;
@@ -218,17 +202,12 @@ class XmavController extends ChangeNotifier {
     return api!.resolvePlayback(vodId, sid: 1, nid: 1);
   }
 
-  String proxiedPlay(String upstreamUrl) {
-    final s = server;
-    if (s == null) return upstreamUrl;
-    return s.resolvePlayableProxyUrl(upstreamUrl);
+  Future<XmavVideoItem> fetchDetail(int vodId) {
+    if (api == null) throw StateError('Xmav not ready');
+    return api!.detail(vodId);
   }
 
   Future<void> disposeModule() async {
-    try {
-      await server?.stop();
-    } catch (_) {}
-    server = null;
     try {
       http.close();
     } catch (_) {}

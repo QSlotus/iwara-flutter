@@ -28,7 +28,7 @@ lib/
   features/
     iwara/         # existing app, black-box behavior preserved
     qinav/         # Flutter rewrite (list/search/detail + local HLS proxy)
-    xmav/          # Flutter rewrite (list/category/search/detail + direct play)
+    xmav/          # Flutter rewrite (HTML scrape list/category/search/detail + direct play)
 ```
 
 ### Shared
@@ -78,6 +78,7 @@ lib/
 | `base` cache | 24h TTL + manual「刷新线路」; full-screen error + retry on fail |
 | Site access | **No** CF forced-IP / no site proxy |
 | Playback | Shared player; **direct** CDN/m3u8 (no local HLS proxy) |
+| Data source | **HTML scrape only** for list/category/search/detail/play; no ajax list mixing |
 | Nav | Bottom tabs: **最新 \| 分类 \| 搜索** |
 | Category IA | Category **grid** → tid list (not chips-on-home) |
 | List paging | Bottom **page numbers** (not infinite scroll) |

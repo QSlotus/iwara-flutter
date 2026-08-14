@@ -18,14 +18,53 @@ class XmavDetailScreen extends StatefulWidget {
 
 class _XmavDetailScreenState extends State<XmavDetailScreen> {
   bool playerLoading = false;
+  bool detailLoading = false;
   String? playerError;
   VideoPlayerController? player;
   XmavPlayback? playback;
+  late XmavVideoItem detail;
+
+  @override
+  void initState() {
+    super.initState();
+    detail = widget.item;
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadDetail());
+  }
 
   @override
   void dispose() {
     player?.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadDetail() async {
+    final api = context.read<XmavController>();
+    if (!api.ready) return;
+    setState(() => detailLoading = true);
+    try {
+      final d = await api.fetchDetail(widget.item.id);
+      if (!mounted) return;
+      setState(() {
+        detail = XmavVideoItem(
+          id: d.id,
+          title: d.title.isNotEmpty ? d.title : widget.item.title,
+          cover: d.cover.isNotEmpty ? d.cover : widget.item.cover,
+          blurb: d.blurb.isNotEmpty ? d.blurb : widget.item.blurb,
+          actor: d.actor.isNotEmpty ? d.actor : widget.item.actor,
+          vodClass: d.vodClass.isNotEmpty ? d.vodClass : widget.item.vodClass,
+          remarks: d.remarks.isNotEmpty ? d.remarks : widget.item.remarks,
+          time: d.time.isNotEmpty ? d.time : widget.item.time,
+          hits: d.hits > 0 ? d.hits : widget.item.hits,
+          score: d.score.isNotEmpty ? d.score : widget.item.score,
+          typeId: d.typeId > 0 ? d.typeId : widget.item.typeId,
+          duration: d.duration.isNotEmpty ? d.duration : widget.item.duration,
+        );
+        detailLoading = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => detailLoading = false);
+    }
   }
 
   Future<void> _play() async {
@@ -41,13 +80,14 @@ class _XmavDetailScreenState extends State<XmavDetailScreen> {
       await player?.dispose();
       final lower = p.url.toLowerCase();
       final isHls = lower.contains('m3u8') || lower.contains('/hls/');
-      // AES-128 media playlists use relative key/segments; proxy for ExoPlayer.
-      final source = isHls ? api.proxiedPlay(p.url) : p.url;
+      // Direct CDN play (no local proxy). Relative AES key/segments resolve against playlist URL.
       final controller = VideoPlayerController.networkUrl(
-        Uri.parse(source),
+        Uri.parse(p.url),
         formatHint: isHls ? VideoFormat.hls : null,
         httpHeaders: {
           'User-Agent': XmavHttp.userAgent,
+          'Referer': api.base.isNotEmpty ? '${api.base}/' : 'http://xmav.vip/',
+          'Origin': api.base.isNotEmpty ? api.base : 'http://xmav.vip',
           'Accept': '*/*',
         },
       );
@@ -79,7 +119,7 @@ class _XmavDetailScreenState extends State<XmavDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final item = widget.item;
+    final item = detail;
     final title = item.title.isEmpty ? '视频 ${item.id}' : item.title;
 
     return Scaffold(
@@ -118,8 +158,7 @@ class _XmavDetailScreenState extends State<XmavDetailScreen> {
               ),
             ),
           const SizedBox(height: 12),
-          if (playerLoading)
-            const LinearProgressIndicator(minHeight: 2),
+          if (playerLoading || detailLoading) const LinearProgressIndicator(minHeight: 2),
           if (playerError != null) ...[
             const SizedBox(height: 8),
             Text(playerError!, style: const TextStyle(color: Colors.redAccent)),
@@ -139,30 +178,27 @@ class _XmavDetailScreenState extends State<XmavDetailScreen> {
           ),
           if (item.actor.isNotEmpty) ...[
             const SizedBox(height: 10),
-            Text('演员: ${item.actor}', style: TextStyle(color: Colors.white.withValues(alpha: 0.85))),
-          ],
-          if (item.remarks.isNotEmpty) ...[
-            const SizedBox(height: 6),
-            Text('备注: ${item.remarks}', style: TextStyle(color: Colors.white.withValues(alpha: 0.75))),
+            Text('演员: ${item.actor}'),
           ],
           if (item.blurb.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            Text(item.blurb, style: TextStyle(color: Colors.white.withValues(alpha: 0.78), height: 1.4)),
+            const SizedBox(height: 10),
+            Text(item.blurb, style: TextStyle(color: Colors.white.withValues(alpha: 0.78))),
           ],
-          if (playback != null) ...[
-            const SizedBox(height: 8),
-            Text(
-              '源: ${playback!.from.isEmpty ? '-' : playback!.from}'
-              '${playback!.usedParse ? ' · parse' : ' · direct'}',
-              style: TextStyle(color: Colors.white.withValues(alpha: 0.55), fontSize: 12),
-            ),
-          ],
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
           FilledButton.icon(
             onPressed: playerLoading ? null : _play,
             icon: const Icon(Icons.play_arrow),
-            label: Text(player == null ? '播放 (1-1)' : '重新加载播放'),
+            label: Text(player == null ? '播放' : '重新播放'),
           ),
+          if (playback != null) ...[
+            const SizedBox(height: 8),
+            Text(
+              playback!.usedParse
+                  ? '线路: ${playback!.from} (parse)'
+                  : '线路: ${playback!.from.isEmpty ? '直链' : playback!.from}',
+              style: TextStyle(fontSize: 12, color: Colors.white.withValues(alpha: 0.55)),
+            ),
+          ],
         ],
       ),
     );

@@ -56,3 +56,8 @@ bug-report.jpg
 build-err.txt
 build-out.txt
 build-pid.txt
+
+# Android signing (never commit)
+android/key.properties
+**/*.jks
+**/*.keystore

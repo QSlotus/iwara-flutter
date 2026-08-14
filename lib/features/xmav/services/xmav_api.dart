@@ -1,8 +1,12 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 
 import '../models/models.dart';
 import 'xmav_http.dart';
 
+/// HTML-first Xmav client.
+///
+/// All list/category/search/detail/play data comes from public MacCMS pages
+/// under the resolved content [base]. No site proxy / local HLS proxy.
 class XmavApi {
   XmavApi({required this.http, required this.base});
 
@@ -10,180 +14,121 @@ class XmavApi {
   String base;
 
   Map<String, String>? _parseMap;
+
   Uri _u(String path, [Map<String, String>? query]) {
     final root = base.endsWith('/') ? base.substring(0, base.length - 1) : base;
     final p = path.startsWith('/') ? path : '/$path';
     return Uri.parse('$root$p').replace(queryParameters: query);
   }
 
-  Future<XmavPageResult> list({
-    int page = 1,
-    int limit = 20,
-    int? tid,
-    int? strictTypeId,
-    int fillPages = 1,
-  }) async {
-    final want = strictTypeId != null && strictTypeId > 0 ? strictTypeId : null;
-    final collected = <XmavVideoItem>[];
-    final seen = <int>{};
-    var cur = page < 1 ? 1 : page;
-    var pageCount = 1;
-    var limitOut = limit;
-    var total = 0;
-    final maxPages = fillPages < 1 ? 1 : fillPages;
-
-    for (var i = 0; i < maxPages; i++) {
-      final q = <String, String>{
-        'mid': '1',
-        'page': '$cur',
-        'limit': '$limit',
-      };
-      if (tid != null && tid > 0) q['tid'] = '$tid';
-      final res = await http.get(_u('/index.php/ajax/data', q).toString(), referer: base);
-      if (res.status < 200 || res.status >= 300) {
-        throw StateError('列表失败 HTTP ${res.status}');
-      }
-      final json = jsonDecode(res.body);
-      if (json is! Map) throw StateError('列表响应非 JSON 对象');
-      final code = json['code'];
-      if (code != 1 && code != '1') {
-        throw StateError('列表失败: ${json['msg'] ?? code}');
-      }
-      int asInt(dynamic v, int d) {
-        if (v is int) return v;
-        return int.tryParse('$v') ?? d;
-      }
-      pageCount = asInt(json['pagecount'], pageCount);
-      limitOut = asInt(json['limit'], limit);
-      total = asInt(json['total'], total);
-      final list = json['list'];
-      var pageRawCount = 0;
-      if (list is List) {
-        pageRawCount = list.length;
-        for (final row in list) {
-          if (row is! Map) continue;
-          final item = XmavVideoItem.fromJson(Map<String, dynamic>.from(row));
-          if (item.id <= 0 || seen.contains(item.id)) continue;
-          if (want != null && item.typeId != want) continue;
-          seen.add(item.id);
-          collected.add(item);
-        }
-      }
-      if (want == null) break;
-      if (collected.length >= 12) break;
-      if (cur >= pageCount) break;
-      if (pageRawCount == 0) break;
-      cur++;
-    }
-
-    return XmavPageResult(
-      items: collected,
-      page: page,
-      pageCount: pageCount,
-      limit: limitOut,
-      total: total,
-    );
-  }
-
-  Future<List<XmavSuggestItem>> suggest(String keyword, {int limit = 10}) async {
-    final wd = keyword.trim();
-    if (wd.isEmpty) return const [];
-    final res = await http.get(
-      _u('/index.php/ajax/suggest', {'mid': '1', 'wd': wd, 'limit': '$limit'}).toString(),
-      referer: base,
-    );
-    if (res.status < 200 || res.status >= 300) return const [];
-    final json = jsonDecode(res.body);
-    if (json is! Map) return const [];
-    final list = json['list'];
-    if (list is! List) return const [];
-    return list.whereType<Map>().map((e) => XmavSuggestItem.fromJson(Map<String, dynamic>.from(e))).toList();
-  }
-
-  Future<XmavPageResult> searchHtml(String keyword, {int page = 1}) async {
-    final wd = keyword.trim();
-    if (wd.isEmpty) {
-      return XmavPageResult(items: const [], page: page, pageCount: 1);
-    }
-    // MacCMS search path; page often encoded in path segment pattern.
-    final path = page <= 1 ? '/xmsearch/-------------/' : '/xmsearch/-------------/page/$page/';
-    final res = await http.get(_u(path, {'wd': wd}).toString(), referer: base);
+  Future<String> _getHtml(String path, {Map<String, String>? query}) async {
+    final res = await http.get(_u(path, query).toString(), referer: base);
     if (res.status < 200 || res.status >= 300) {
-      throw StateError('搜索失败 HTTP ${res.status}');
+      throw StateError('页面失败 HTTP ${res.status}: $path');
     }
-    final items = _parseSearchHtml(res.body);
-    // Heuristic page count: if full-ish page, allow next.
-    final pageCount = items.isEmpty ? (page > 1 ? page : 1) : (items.length >= 10 ? page + 1 : page);
-    return XmavPageResult(items: items, page: page, pageCount: pageCount, total: items.length);
+    return res.body;
   }
 
-  List<XmavVideoItem> _parseSearchHtml(String html) {
-    final out = <XmavVideoItem>[];
-    final seen = <int>{};
-    final re = RegExp(
-      r'''href\s*=\s*["']([^"']*xmdetail/(\d+)/?)["'][^>]*>(.*?)</a>''',
-      caseSensitive: false,
-      dotAll: true,
-    );
-    for (final m in re.allMatches(html)) {
-      final id = int.tryParse(m.group(2) ?? '') ?? 0;
-      if (id <= 0 || seen.contains(id)) continue;
-      seen.add(id);
-      final rawTitle = m.group(3) ?? '';
-      final title = rawTitle.replaceAll(RegExp(r'<[^>]+>'), '').trim();
-      if (title.isEmpty) continue;
-      out.add(XmavVideoItem(id: id, title: title));
-    }
-    // Fallback: bare detail links
-    if (out.isEmpty) {
-      final re2 = RegExp(r'''/xmdetail/(\d+)/?''');
-      for (final m in re2.allMatches(html)) {
-        final id = int.tryParse(m.group(1) ?? '') ?? 0;
-        if (id <= 0 || seen.contains(id)) continue;
-        seen.add(id);
-        out.add(XmavVideoItem(id: id, title: '视频 $id'));
-      }
-    }
-    return out;
-  }
-
+  /// Categories from home nav links `/xmtype/{tid}/`.
   Future<List<XmavCategory>> loadCategories() async {
     try {
-      final res = await http.get('$base/', referer: base);
-      if (res.status >= 200 && res.status < 300) {
-        final parsed = _parseCategories(res.body);
-        if (parsed.isNotEmpty) return parsed;
-      }
+      final html = await _getHtml('/');
+      final parsed = XmavHtml.parseCategories(html);
+      if (parsed.isNotEmpty) return parsed;
     } catch (_) {}
     return List<XmavCategory>.from(xmavFallbackCategories);
   }
 
-  List<XmavCategory> _parseCategories(String html) {
-    final out = <XmavCategory>[];
-    final seen = <int>{};
-    final re = RegExp(
-      r'''href\s*=\s*["'][^"']*xmtype/(\d+)/?["'][^>]*>(.*?)</a>''',
-      caseSensitive: false,
-      dotAll: true,
-    );
-    for (final m in re.allMatches(html)) {
-      final tid = int.tryParse(m.group(1) ?? '') ?? 0;
-      if (tid <= 0 || seen.contains(tid)) continue;
-      final name = (m.group(2) ?? '').replaceAll(RegExp(r'<[^>]+>'), '').trim();
-      if (name.isEmpty) continue;
-      seen.add(tid);
-      out.add(XmavCategory(tid: tid, name: name));
+  /// Homepage "最新视频" block. Site home has no multi-page; page>1 returns empty.
+  Future<XmavPageResult> latest({int page = 1}) async {
+    if (page > 1) {
+      return XmavPageResult(items: const [], page: page, pageCount: 1);
     }
-    return out;
+    final html = await _getHtml('/');
+    final items = XmavHtml.parseVideoCards(html);
+    return XmavPageResult(
+      items: items,
+      page: 1,
+      pageCount: 1,
+      limit: items.length,
+      total: items.length,
+    );
   }
 
+  /// Category list page: `/xmtype/{tid}/` or `/xmtype/{tid}-{page}/`.
+  Future<XmavPageResult> categoryList(int tid, {int page = 1}) async {
+    if (tid <= 0) {
+      throw StateError('无效分类 tid');
+    }
+    final p = page < 1 ? 1 : page;
+    final path = p <= 1 ? '/xmtype/$tid/' : '/xmtype/$tid-$p/';
+    final html = await _getHtml(path);
+    final items = XmavHtml.parseVideoCards(html);
+    final pager = XmavHtml.parsePager(html);
+    return XmavPageResult(
+      items: items,
+      page: pager.page ?? p,
+      pageCount: pager.pageCount ?? (items.isEmpty ? p : p),
+      limit: items.length,
+      total: pager.total ?? items.length,
+    );
+  }
+
+  /// Search result pages.
+  Future<XmavPageResult> search(String keyword, {int page = 1}) async {
+    final wd = keyword.trim();
+    if (wd.isEmpty) {
+      return XmavPageResult(items: const [], page: page, pageCount: 1);
+    }
+    final p = page < 1 ? 1 : page;
+    final path = p <= 1 ? '/xmsearch/-------------/' : '/xmsearch/-------------/page/$p/';
+    final html = await _getHtml(path, query: {'wd': wd});
+    final items = XmavHtml.parseVideoCards(html);
+    final pager = XmavHtml.parsePager(html);
+    return XmavPageResult(
+      items: items,
+      page: pager.page ?? p,
+      pageCount: pager.pageCount ?? (items.isEmpty ? 1 : p),
+      limit: items.length,
+      total: pager.total ?? items.length,
+    );
+  }
+
+  /// Optional soft suggest via site ajax (not used for core lists).
+  Future<List<XmavSuggestItem>> suggest(String keyword, {int limit = 10}) async {
+    final wd = keyword.trim();
+    if (wd.isEmpty) return const [];
+    try {
+      final res = await http.get(
+        _u('/index.php/ajax/suggest', {'mid': '1', 'wd': wd, 'limit': '$limit'}).toString(),
+        referer: base,
+      );
+      if (res.status < 200 || res.status >= 300) return const [];
+      final json = jsonDecode(res.body);
+      if (json is! Map) return const [];
+      final list = json['list'];
+      if (list is! List) return const [];
+      return list
+          .whereType<Map>()
+          .map((e) => XmavSuggestItem.fromJson(Map<String, dynamic>.from(e)))
+          .toList();
+    } catch (_) {
+      return const [];
+    }
+  }
+
+  /// Detail metadata from `/xmdetail/{id}/`.
+  Future<XmavVideoItem> detail(int id) async {
+    if (id <= 0) throw StateError('无效视频 id');
+    final html = await _getHtml('/xmdetail/$id/');
+    return XmavHtml.parseDetail(html, id: id, base: base);
+  }
+
+  /// Play URL from `/xmplay/{id}-1-1/` → `player_aaaa` (+ optional parse fallback).
   Future<XmavPlayback> resolvePlayback(int vodId, {int sid = 1, int nid = 1}) async {
     final playPath = '/xmplay/$vodId-$sid-$nid/';
-    final res = await http.get(_u(playPath).toString(), referer: base);
-    if (res.status < 200 || res.status >= 300) {
-      throw StateError('播放页失败 HTTP ${res.status}');
-    }
-    final obj = _extractPlayerAaaa(res.body);
+    final html = await _getHtml(playPath);
+    final obj = XmavHtml.extractPlayerAaaa(html);
     if (obj == null) {
       throw StateError('播放页未找到 player_aaaa');
     }
@@ -207,61 +152,64 @@ class XmavApi {
       throw StateError('无法解析播放地址');
     }
 
-    return XmavPlayback(url: url, from: from, encrypt: encrypt, title: title, usedParse: usedParse);
+    return XmavPlayback(
+      url: url,
+      from: from,
+      encrypt: encrypt,
+      title: title,
+      usedParse: usedParse,
+    );
   }
 
-  Map<String, dynamic>? _extractPlayerAaaa(String html) {
-    final idx = html.indexOf('player_aaaa');
-    if (idx < 0) return null;
-    // Find first `{` after assignment
-    final assign = html.indexOf('=', idx);
-    if (assign < 0) return null;
-    final start = html.indexOf('{', assign);
-    if (start < 0) return null;
-    final end = _matchJsonObjectEnd(html, start);
-    if (end < 0) return null;
-    final raw = html.substring(start, end + 1);
+  Future<String?> _applyParseIfNeeded({required String url, required String from}) async {
+    if (url.isEmpty) return null;
+    await _ensureParseMap();
+    final parse = _parseMap?[from] ?? _parseMap?['_default'];
+    if (parse == null || parse.isEmpty) {
+      if (url.startsWith('http')) return url;
+      return null;
+    }
+    final absParse = parse.startsWith('http') ? parse : _u(parse).toString();
+    if (absParse.contains('url=')) {
+      return '$absParse${Uri.encodeQueryComponent(url)}';
+    }
+    return '$absParse${Uri.encodeQueryComponent(url)}';
+  }
+
+  Future<void> _ensureParseMap() async {
+    if (_parseMap != null) return;
+    _parseMap = {};
     try {
-      final decoded = jsonDecode(raw);
-      if (decoded is Map<String, dynamic>) return decoded;
-      if (decoded is Map) return Map<String, dynamic>.from(decoded);
+      final res = await http.get(_u('/static/js/playerconfig.js').toString(), referer: base);
+      if (res.status < 200 || res.status >= 300) {
+        _parseMap = {'jsp': '/dp.php?url=', '_default': '/dp.php?url='};
+        return;
+      }
+      final body = res.body;
+      final block = RegExp(r'player_list\s*[:=]\s*\{', caseSensitive: false).firstMatch(body);
+      if (block == null) {
+        _parseMap = {'jsp': '/dp.php?url=', '_default': '/dp.php?url='};
+        return;
+      }
+      final start = body.indexOf('{', block.start);
+      final end = XmavHtml.matchJsonObjectEnd(body, start);
+      if (end < 0) {
+        _parseMap = {'jsp': '/dp.php?url=', '_default': '/dp.php?url='};
+        return;
+      }
+      final chunk = body.substring(start, end + 1);
+      final fromRe = RegExp(
+        r'''["']?(\w+)["']?\s*:\s*\{[^}]*?parse\s*:\s*["']([^"']+)["']''',
+        caseSensitive: false,
+      );
+      for (final m in fromRe.allMatches(chunk)) {
+        _parseMap![m.group(1)!] = m.group(2)!;
+      }
+      _parseMap!.putIfAbsent('jsp', () => '/dp.php?url=');
+      _parseMap!.putIfAbsent('_default', () => '/dp.php?url=');
     } catch (_) {
-      // Some sites emit JS object with unquoted keys — rare for player_aaaa; fail soft.
+      _parseMap = {'jsp': '/dp.php?url=', '_default': '/dp.php?url='};
     }
-    return null;
-  }
-
-  int _matchJsonObjectEnd(String s, int start) {
-    var depth = 0;
-    var inStr = false;
-    var esc = false;
-    var quote = '';
-    for (var i = start; i < s.length; i++) {
-      final c = s[i];
-      if (inStr) {
-        if (esc) {
-          esc = false;
-          continue;
-        }
-        if (c == r'\') {
-          esc = true;
-          continue;
-        }
-        if (c == quote) inStr = false;
-        continue;
-      }
-      if (c == '"' || c == "'") {
-        inStr = true;
-        quote = c;
-        continue;
-      }
-      if (c == '{') depth++;
-      if (c == '}') {
-        depth--;
-        if (depth == 0) return i;
-      }
-    }
-    return -1;
   }
 
   static String decodePlayerUrl(String url, int encrypt) {
@@ -272,9 +220,7 @@ class XmavApi {
       try {
         final bytes = base64.decode(_normalizeB64(v));
         v = jsUnescape(utf8.decode(bytes, allowMalformed: true));
-      } catch (_) {
-        // keep original
-      }
+      } catch (_) {}
     }
     return v.trim();
   }
@@ -287,7 +233,6 @@ class XmavApi {
   }
 
   static String jsUnescape(String input) {
-    // Handle %uXXXX and %XX similar to JS unescape.
     final buf = StringBuffer();
     for (var i = 0; i < input.length; i++) {
       final c = input[i];
@@ -322,68 +267,217 @@ class XmavApi {
   static bool _looksDirectPlayable(String url) {
     final u = url.trim().toLowerCase();
     if (!(u.startsWith('http://') || u.startsWith('https://'))) return false;
-    if (u.contains('.m3u8') || u.contains('.mp4') || u.contains('.flv') || u.contains('.mkv')) return true;
-    // some CDNs omit extension but still HLS
+    if (u.contains('.m3u8') || u.contains('.mp4') || u.contains('.flv') || u.contains('.mkv')) {
+      return true;
+    }
     if (u.contains('m3u8') || u.contains('/hls/')) return true;
     return false;
-  }
-
-  Future<String?> _applyParseIfNeeded({required String url, required String from}) async {
-    if (url.isEmpty) return null;
-    await _ensureParseMap();
-    final parse = _parseMap?[from] ?? _parseMap?['_default'];
-    if (parse == null || parse.isEmpty) {
-      // last resort: if url is absolute http, return as-is
-      if (url.startsWith('http')) return url;
-      return null;
-    }
-    final absParse = parse.startsWith('http') ? parse : _u(parse).toString();
-    // parse endpoints usually expect `parse + url`
-    if (absParse.contains('url=')) {
-      if (absParse.endsWith('url=') || absParse.endsWith('url=')) {
-        return '$absParse${Uri.encodeQueryComponent(url)}';
-      }
-      return '$absParse${Uri.encodeQueryComponent(url)}';
-    }
-    return '$absParse${Uri.encodeQueryComponent(url)}';
-  }
-
-  Future<void> _ensureParseMap() async {
-    if (_parseMap != null) return;
-    _parseMap = {};
-    try {
-      final res = await http.get(_u('/static/js/playerconfig.js').toString(), referer: base);
-      if (res.status < 200 || res.status >= 300) return;
-      final body = res.body;
-      // player_list:{ jsp:{...,parse:"/dp.php?url=",ps:"1"}, ...}
-      final block = RegExp(r'player_list\s*[:=]\s*\{', caseSensitive: false).firstMatch(body);
-      if (block == null) return;
-      final start = body.indexOf('{', block.start);
-      final end = _matchJsonObjectEnd(body, start);
-      if (end < 0) return;
-      final chunk = body.substring(start, end + 1);
-      final fromRe = RegExp(
-        r'''["']?(\w+)["']?\s*:\s*\{[^}]*?parse\s*:\s*["']([^"']+)["']''',
-        caseSensitive: false,
-      );
-      for (final m in fromRe.allMatches(chunk)) {
-        final key = m.group(1)!;
-        final parse = m.group(2)!;
-        _parseMap![key] = parse;
-      }
-      // common defaults
-      _parseMap!.putIfAbsent('jsp', () => '/dp.php?url=');
-      _parseMap!.putIfAbsent('_default', () => '/dp.php?url=');
-    } catch (_) {
-      _parseMap = {
-        'jsp': '/dp.php?url=',
-        '_default': '/dp.php?url=',
-      };
-    }
   }
 
   int _asInt(dynamic v) {
     if (v is int) return v;
     return int.tryParse('$v') ?? 0;
+  }
+}
+
+class XmavPagerInfo {
+  const XmavPagerInfo({this.page, this.pageCount, this.total});
+  final int? page;
+  final int? pageCount;
+  final int? total;
+}
+
+/// Pure HTML extractors for MacCMS XM template pages.
+class XmavHtml {
+  static List<XmavCategory> parseCategories(String html) {
+    final out = <XmavCategory>[];
+    final seen = <int>{};
+    final re = RegExp(
+      r'''href\s*=\s*["'][^"']*xmtype/(\d+)/?["'][^>]*>(.*?)</a>''',
+      caseSensitive: false,
+      dotAll: true,
+    );
+    for (final m in re.allMatches(html)) {
+      final tid = int.tryParse(m.group(1) ?? '') ?? 0;
+      if (tid <= 0 || seen.contains(tid)) continue;
+      final name = _stripTags(m.group(2) ?? '');
+      if (name.isEmpty) continue;
+      seen.add(tid);
+      out.add(XmavCategory(tid: tid, name: name));
+    }
+    return out;
+  }
+
+  /// Card pattern:
+  /// `<a href="/xmdetail/123/" title="..."><img src="..." ...><br /><span>08-13.</span> title</a>`
+  static List<XmavVideoItem> parseVideoCards(String html) {
+    final out = <XmavVideoItem>[];
+    final seen = <int>{};
+
+    final cardRe = RegExp(
+      r'''<a\s+href\s*=\s*["'][^"']*xmdetail/(\d+)/?["']([^>]*)>(.*?)</a>''',
+      caseSensitive: false,
+      dotAll: true,
+    );
+    for (final m in cardRe.allMatches(html)) {
+      final id = int.tryParse(m.group(1) ?? '') ?? 0;
+      if (id <= 0 || seen.contains(id)) continue;
+      final attrs = m.group(2) ?? '';
+      final inner = m.group(3) ?? '';
+      var title = _attr(attrs, 'title');
+      if (title.isEmpty) {
+        title = _stripTags(inner).replaceFirst(RegExp(r'^\d{1,2}-\d{1,2}\.\s*'), '').trim();
+      }
+      if (title.isEmpty) title = '视频 $id';
+      var cover = '';
+      final img = RegExp(
+        r'''<img[^>]+(?:src|data-original|data-src)\s*=\s*["']([^"']+)["']''',
+        caseSensitive: false,
+      ).firstMatch(inner);
+      if (img != null) cover = (img.group(1) ?? '').trim();
+      var time = '';
+      final span = RegExp(r'''<span[^>]*>\s*([^<]+?)\s*</span>''', caseSensitive: false).firstMatch(inner);
+      if (span != null) {
+        time = (span.group(1) ?? '').replaceAll('.', '').trim();
+      }
+      seen.add(id);
+      out.add(XmavVideoItem(id: id, title: title, cover: cover, time: time));
+    }
+
+    if (out.isEmpty) {
+      final bare = RegExp(r'''/xmdetail/(\d+)/?''');
+      for (final m in bare.allMatches(html)) {
+        final id = int.tryParse(m.group(1) ?? '') ?? 0;
+        if (id <= 0 || seen.contains(id)) continue;
+        seen.add(id);
+        out.add(XmavVideoItem(id: id, title: '视频 $id'));
+      }
+    }
+    return out;
+  }
+
+  /// `共3574条数据,当前1/149页`
+  static XmavPagerInfo parsePager(String html) {
+    final tip = RegExp(r'共\s*(\d+)\s*条数据\s*,\s*当前\s*(\d+)\s*/\s*(\d+)\s*页').firstMatch(html);
+    if (tip != null) {
+      return XmavPagerInfo(
+        total: int.tryParse(tip.group(1) ?? ''),
+        page: int.tryParse(tip.group(2) ?? ''),
+        pageCount: int.tryParse(tip.group(3) ?? ''),
+      );
+    }
+    final simple = RegExp(r'当前\s*(\d+)\s*/\s*(\d+)\s*页').firstMatch(html);
+    if (simple != null) {
+      return XmavPagerInfo(
+        page: int.tryParse(simple.group(1) ?? ''),
+        pageCount: int.tryParse(simple.group(2) ?? ''),
+      );
+    }
+    return const XmavPagerInfo();
+  }
+
+  static XmavVideoItem parseDetail(String html, {required int id, required String base}) {
+    var title = '';
+    final titleDt = RegExp(r'片名[：:]\s*([^<]+)').firstMatch(html);
+    if (titleDt != null) title = titleDt.group(1)!.trim();
+    if (title.isEmpty) {
+      final t = RegExp(r'<title>([^<]+)').firstMatch(html);
+      if (t != null) {
+        title = t.group(1)!.split(RegExp(r'在线观看|-')).first.trim();
+      }
+    }
+    if (title.isEmpty) title = '视频 $id';
+
+    var cover = '';
+    final mediaImg = RegExp(
+      r'''class="media"[\s\S]*?<img[^>]+src\s*=\s*["']([^"']+)["']''',
+      caseSensitive: false,
+    ).firstMatch(html);
+    if (mediaImg != null) {
+      cover = mediaImg.group(1)!.trim();
+    } else {
+      final any = RegExp(
+        r'''src\s*=\s*["'](https?://[^"']+\.(?:jpg|jpeg|png|webp)[^"']*)["']''',
+        caseSensitive: false,
+      ).firstMatch(html);
+      if (any != null) cover = any.group(1)!.trim();
+    }
+
+    var vodClass = '';
+    final typeDt = RegExp(r'类型[：:]\s*([^<]+)').firstMatch(html);
+    if (typeDt != null) vodClass = typeDt.group(1)!.trim();
+
+    var typeId = 0;
+    final typeLink = RegExp(r'''xmtype/(\d+)/?["'][^>]*>([^<]*)</a>''').firstMatch(html);
+    if (typeLink != null) {
+      typeId = int.tryParse(typeLink.group(1) ?? '') ?? 0;
+      if (vodClass.isEmpty) vodClass = (typeLink.group(2) ?? '').trim();
+    }
+
+    return XmavVideoItem(
+      id: id,
+      title: title,
+      cover: cover.startsWith('//') ? 'https:$cover' : cover,
+      vodClass: vodClass,
+      typeId: typeId,
+    );
+  }
+
+  static Map<String, dynamic>? extractPlayerAaaa(String html) {
+    final idx = html.indexOf('player_aaaa');
+    if (idx < 0) return null;
+    final assign = html.indexOf('=', idx);
+    if (assign < 0) return null;
+    final start = html.indexOf('{', assign);
+    if (start < 0) return null;
+    final end = matchJsonObjectEnd(html, start);
+    if (end < 0) return null;
+    final raw = html.substring(start, end + 1);
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is Map<String, dynamic>) return decoded;
+      if (decoded is Map) return Map<String, dynamic>.from(decoded);
+    } catch (_) {}
+    return null;
+  }
+
+  static int matchJsonObjectEnd(String s, int start) {
+    var depth = 0;
+    var inStr = false;
+    var esc = false;
+    var quote = '';
+    for (var i = start; i < s.length; i++) {
+      final c = s[i];
+      if (inStr) {
+        if (esc) {
+          esc = false;
+          continue;
+        }
+        if (c == r'\') {
+          esc = true;
+          continue;
+        }
+        if (c == quote) inStr = false;
+        continue;
+      }
+      if (c == '"' || c == "'") {
+        inStr = true;
+        quote = c;
+        continue;
+      }
+      if (c == '{') depth++;
+      if (c == '}') {
+        depth--;
+        if (depth == 0) return i;
+      }
+    }
+    return -1;
+  }
+
+  static String _stripTags(String raw) => raw.replaceAll(RegExp(r'<[^>]+>'), '').replaceAll(RegExp(r'\s+'), ' ').trim();
+
+  static String _attr(String attrs, String name) {
+    final m = RegExp('''$name\\s*=\\s*["']([^"']*)["']''', caseSensitive: false).firstMatch(attrs);
+    return (m?.group(1) ?? '').trim();
   }
 }
