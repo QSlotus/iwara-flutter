@@ -78,7 +78,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
       } else {
         // Prefer official /search; AppController falls back when Iwara returns errors.serverError.
         videoPayload = await api.searchResults(
-          type: 'video',
+          type: 'videos',
           query: query,
           limit: 24,
           page: page,
@@ -86,7 +86,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
         );
         try {
           userPayload = await api.searchResults(
-            type: 'user',
+            type: 'users',
             query: query,
             limit: 12,
             page: 0,

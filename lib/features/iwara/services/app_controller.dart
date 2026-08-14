@@ -616,7 +616,9 @@ class AppController extends ChangeNotifier {
     String sort = 'newest',
   }) async {
     final q = query.trim();
-    final normalizedType = type.trim().isEmpty ? 'video' : type.trim();
+    // Official site uses plural types: videos / users / images.
+    // Singular (video/user/image) returns errors.serverError.
+    final normalizedType = _normalizeSearchType(type);
     try {
       return await callApi('fetchSearchResults', query: {
         'type': normalizedType,
@@ -627,7 +629,7 @@ class AppController extends ChangeNotifier {
       });
     } catch (e) {
       if (!_isSearchUpstreamFailure(e)) rethrow;
-      if (normalizedType == 'user') {
+      if (normalizedType == 'users') {
         return _fallbackSearchUsers(query: q, limit: limit, page: page);
       }
       return _fallbackSearchVideos(query: q, limit: limit, page: page, sort: sort);
