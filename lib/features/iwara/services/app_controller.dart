@@ -633,7 +633,46 @@ class AppController extends ChangeNotifier {
       if (normalizedType == 'users') {
         return _fallbackSearchUsers(query: q, limit: limit, page: page);
       }
-      return _fallbackSearchVideos(query: q, limit: limit, page: page, sort: sort);
+      return _fallbackSearchVideos(query: q, limit: limit, page: page, sort: normalizedSort);
+    }
+  }
+
+
+  /// Search accepts: date | views | likes | relevance (not newest/trending).
+  String _normalizeSearchSort(String sort) {
+    switch (sort.trim().toLowerCase()) {
+      case 'newest':
+      case 'date':
+        return 'date';
+      case 'views':
+        return 'views';
+      case 'likes':
+        return 'likes';
+      case 'trending':
+      case 'relevance':
+      case '':
+        return 'relevance';
+      default:
+        return 'relevance';
+    }
+  }
+
+  // Official site uses plural types: videos / users / images.
+  String _normalizeSearchType(String type) {
+    final t = type.trim().toLowerCase();
+    switch (t) {
+      case '':
+      case 'video':
+      case 'videos':
+        return 'videos';
+      case 'user':
+      case 'users':
+        return 'users';
+      case 'image':
+      case 'images':
+        return 'images';
+      default:
+        return t;
     }
   }
 
