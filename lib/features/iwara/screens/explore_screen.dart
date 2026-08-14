@@ -76,19 +76,25 @@ class _ExploreScreenState extends State<ExploreScreen> {
           'sort': sort,
         });
       } else {
-        videoPayload = await api.callApi('fetchSearchResults', query: {
-          'type': 'video',
-          'query': query,
-          'limit': 24,
-          'page': page,
-          'sort': sort,
-        });
-        userPayload = await api.callApi('fetchSearchResults', query: {
-          'type': 'user',
-          'query': query,
-          'limit': 12,
-          'page': 0,
-        });
+        // Prefer official /search; AppController falls back when Iwara returns errors.serverError.
+        videoPayload = await api.searchResults(
+          type: 'video',
+          query: query,
+          limit: 24,
+          page: page,
+          sort: sort,
+        );
+        try {
+          userPayload = await api.searchResults(
+            type: 'user',
+            query: query,
+            limit: 12,
+            page: 0,
+          );
+        } catch (_) {
+          // User section is optional; keep video results even if user fallback fails.
+          userPayload = null;
+        }
       }
       if (!mounted) return;
       setState(() {

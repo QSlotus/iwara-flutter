@@ -605,6 +605,134 @@ class AppController extends ChangeNotifier {
     }
   }
 
+
+  /// Official `/search` is currently returning `errors.serverError` (HTTP 500)
+  /// from Iwara. Fall back to autocomplete + tag-filtered lists when that happens.
+  Future<dynamic> searchResults({
+    required String type,
+    required String query,
+    int limit = 24,
+    int page = 0,
+    String sort = 'newest',
+  }) async {
+    final q = query.trim();
+    final normalizedType = type.trim().isEmpty ? 'video' : type.trim();
+    try {
+      return await callApi('fetchSearchResults', query: {
+        'type': normalizedType,
+        'query': q,
+        'limit': limit,
+        'page': page,
+        'sort': sort,
+      });
+    } catch (e) {
+      if (!_isSearchUpstreamFailure(e)) rethrow;
+      if (normalizedType == 'user') {
+        return _fallbackSearchUsers(query: q, limit: limit, page: page);
+      }
+      return _fallbackSearchVideos(query: q, limit: limit, page: page, sort: sort);
+    }
+  }
+
+  bool _isSearchUpstreamFailure(Object error) {
+    final msg = error.toString().toLowerCase();
+    return msg.contains('errors.servererror') ||
+        msg.contains('servererror') ||
+        msg.contains('请求失败（500') ||
+        msg.contains('请求失败(500') ||
+        msg.contains('statuscode: 500') ||
+        msg.contains(' 500');
+  }
+
+  Future<Map<String, dynamic>> _fallbackSearchUsers({
+    required String query,
+    int limit = 12,
+    int page = 0,
+  }) async {
+    final payload = await callApi(
+      'fetchAutocompleteUsers',
+      query: {
+        'query': query,
+        'limit': limit,
+        'page': page,
+      },
+      tokenOverride: '',
+    );
+    final record = asRecord(payload);
+    final results = listResults(payload).map(unwrapUser).toList();
+    return <String, dynamic>{
+      ...record,
+      'results': results,
+      'fallback': 'autocomplete-users',
+    };
+  }
+
+  Future<Map<String, dynamic>> _fallbackSearchVideos({
+    required String query,
+    int limit = 24,
+    int page = 0,
+    String sort = 'newest',
+  }) async {
+    final tagPayload = await callApi(
+      'fetchAutocompleteTags',
+      query: {'query': query},
+      tokenOverride: '',
+    );
+    final tagIds = <String>[];
+    for (final tag in listResults(tagPayload)) {
+      final id = '${tag['id'] ?? ''}'.trim();
+      if (id.isEmpty || tagIds.contains(id)) continue;
+      tagIds.add(id);
+      if (tagIds.length >= 6) break;
+    }
+
+    // Also try the raw query as a tag id (common for exact tag searches).
+    final raw = query.trim().toLowerCase().replaceAll(' ', '_');
+    if (raw.isNotEmpty && !tagIds.contains(raw)) {
+      tagIds.add(raw);
+    }
+
+    if (tagIds.isEmpty) {
+      throw HttpException(
+        '官方搜索暂不可用，且未找到可匹配的标签。可尝试更具体的英文标签，或粘贴视频 ID。',
+      );
+    }
+
+    final videoSort = sort == 'newest' ? 'date' : sort;
+    Object? lastError;
+    for (final tagId in tagIds) {
+      try {
+        final payload = await callApi(
+          'fetchVideos',
+          query: {
+            'limit': limit,
+            'page': page,
+            'sort': videoSort,
+            'tags': tagId,
+          },
+          tokenOverride: '',
+        );
+        final record = asRecord(payload);
+        final results = listVideos(payload);
+        // Accept empty first page (valid no-results) for exact tag match.
+        return <String, dynamic>{
+          ...record,
+          'results': results,
+          'fallback': 'videos-by-tag',
+          'fallbackTag': tagId,
+        };
+      } catch (e) {
+        lastError = e;
+        // Try next candidate tag when this one 500s / rejects.
+        continue;
+      }
+    }
+
+    throw HttpException(
+      '官方搜索暂不可用，标签兜底也失败了: ${lastError ?? 'unknown'}',
+    );
+  }
+
   dynamic _decode(http.Response response) {
     final text = response.body;
     dynamic payload;
