@@ -16,43 +16,72 @@ class XmavApi {
     return Uri.parse('$root$p').replace(queryParameters: query);
   }
 
-  Future<XmavPageResult> list({int page = 1, int limit = 20, int? tid}) async {
-    final q = <String, String>{
-      'mid': '1',
-      'page': '$page',
-      'limit': '$limit',
-    };
-    if (tid != null && tid > 0) q['tid'] = '$tid';
-    final res = await http.get(_u('/index.php/ajax/data', q).toString(), referer: base);
-    if (res.status < 200 || res.status >= 300) {
-      throw StateError('列表失败 HTTP ${res.status}');
-    }
-    final json = jsonDecode(res.body);
-    if (json is! Map) throw StateError('列表响应非 JSON 对象');
-    final code = json['code'];
-    if (code != 1 && code != '1') {
-      throw StateError('列表失败: ${json['msg'] ?? code}');
-    }
-    final list = json['list'];
-    final items = <XmavVideoItem>[];
-    if (list is List) {
-      for (final row in list) {
-        if (row is Map) {
-          items.add(XmavVideoItem.fromJson(Map<String, dynamic>.from(row)));
+  Future<XmavPageResult> list({
+    int page = 1,
+    int limit = 20,
+    int? tid,
+    int? strictTypeId,
+    int fillPages = 1,
+  }) async {
+    final want = strictTypeId != null && strictTypeId > 0 ? strictTypeId : null;
+    final collected = <XmavVideoItem>[];
+    final seen = <int>{};
+    var cur = page < 1 ? 1 : page;
+    var pageCount = 1;
+    var limitOut = limit;
+    var total = 0;
+    final maxPages = fillPages < 1 ? 1 : fillPages;
+
+    for (var i = 0; i < maxPages; i++) {
+      final q = <String, String>{
+        'mid': '1',
+        'page': '$cur',
+        'limit': '$limit',
+      };
+      if (tid != null && tid > 0) q['tid'] = '$tid';
+      final res = await http.get(_u('/index.php/ajax/data', q).toString(), referer: base);
+      if (res.status < 200 || res.status >= 300) {
+        throw StateError('列表失败 HTTP ${res.status}');
+      }
+      final json = jsonDecode(res.body);
+      if (json is! Map) throw StateError('列表响应非 JSON 对象');
+      final code = json['code'];
+      if (code != 1 && code != '1') {
+        throw StateError('列表失败: ${json['msg'] ?? code}');
+      }
+      int asInt(dynamic v, int d) {
+        if (v is int) return v;
+        return int.tryParse('$v') ?? d;
+      }
+      pageCount = asInt(json['pagecount'], pageCount);
+      limitOut = asInt(json['limit'], limit);
+      total = asInt(json['total'], total);
+      final list = json['list'];
+      var pageRawCount = 0;
+      if (list is List) {
+        pageRawCount = list.length;
+        for (final row in list) {
+          if (row is! Map) continue;
+          final item = XmavVideoItem.fromJson(Map<String, dynamic>.from(row));
+          if (item.id <= 0 || seen.contains(item.id)) continue;
+          if (want != null && item.typeId != want) continue;
+          seen.add(item.id);
+          collected.add(item);
         }
       }
-    }
-    int asInt(dynamic v, int d) {
-      if (v is int) return v;
-      return int.tryParse('$v') ?? d;
+      if (want == null) break;
+      if (collected.length >= 12) break;
+      if (cur >= pageCount) break;
+      if (pageRawCount == 0) break;
+      cur++;
     }
 
     return XmavPageResult(
-      items: items,
-      page: asInt(json['page'], page),
-      pageCount: asInt(json['pagecount'], 1),
-      limit: asInt(json['limit'], limit),
-      total: asInt(json['total'], items.length),
+      items: collected,
+      page: page,
+      pageCount: pageCount,
+      limit: limitOut,
+      total: total,
     );
   }
 

@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
@@ -39,14 +39,16 @@ class _XmavDetailScreenState extends State<XmavDetailScreen> {
       if (!mounted) return;
       playback = p;
       await player?.dispose();
-      final isHls = p.url.toLowerCase().contains('m3u8') || p.url.toLowerCase().contains('/hls/');
+      final lower = p.url.toLowerCase();
+      final isHls = lower.contains('m3u8') || lower.contains('/hls/');
+      // AES-128 media playlists use relative key/segments; proxy for ExoPlayer.
+      final source = isHls ? api.proxiedPlay(p.url) : p.url;
       final controller = VideoPlayerController.networkUrl(
-        Uri.parse(p.url),
+        Uri.parse(source),
         formatHint: isHls ? VideoFormat.hls : null,
         httpHeaders: {
           'User-Agent': XmavHttp.userAgent,
           'Accept': '*/*',
-          if (api.base.isNotEmpty) 'Referer': api.base,
         },
       );
       player = controller;

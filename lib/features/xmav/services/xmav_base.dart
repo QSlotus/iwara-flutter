@@ -123,14 +123,23 @@ class XmavBaseResolver {
   }
 
   static String? _extractUrlList(String html) {
-    final re = RegExp(r'urlList\s*=\s*\[([^\]]+)\]', caseSensitive: false);
-    final m = re.firstMatch(html);
-    if (m == null) return null;
-    final inner = m.group(1)!;
-    final urls = RegExp(r'''["'](https?://[^"']+)["']''').allMatches(inner).map((e) => e.group(1)!).toList();
-    if (urls.isEmpty) return null;
-    urls.shuffle();
-    return urls.first;
+    // Array form: urlList = ["a", "b"]
+    final arr = RegExp(r'urlList\s*=\s*\[([^\]]+)\]', caseSensitive: false).firstMatch(html);
+    if (arr != null) {
+      final inner = arr.group(1)!;
+      final urls = RegExp(r'"(https?://[^"]+)"').allMatches(inner).map((e) => e.group(1)!).toList();
+      final urls2 = RegExp(r"'(https?://[^']+)'").allMatches(inner).map((e) => e.group(1)!).toList();
+      final all = [...urls, ...urls2];
+      if (all.isNotEmpty) {
+        all.shuffle();
+        return all.first;
+      }
+    }
+    // String form observed live: urlList="https://m.xxx.wiki"
+    final one = RegExp(r'urlList\s*=\s*"\s*(https?://[^"\s]+)\s*"', caseSensitive: false).firstMatch(html);
+    if (one != null) return one.group(1)!.trim();
+    final one2 = RegExp(r"urlList\s*=\s*'\s*(https?://[^'\s]+)\s*'", caseSensitive: false).firstMatch(html);
+    return one2?.group(1)?.trim();
   }
 
   static String? _extractFirstHttpUrl(String html) {

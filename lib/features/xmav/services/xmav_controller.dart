@@ -1,10 +1,11 @@
-﻿import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/models.dart';
 import 'xmav_api.dart';
 import 'xmav_base.dart';
 import 'xmav_http.dart';
+import 'xmav_server.dart';
 
 class XmavController extends ChangeNotifier {
   XmavController({this.onExitModule});
@@ -16,6 +17,7 @@ class XmavController extends ChangeNotifier {
   XmavBaseStore? _store;
   XmavBaseResolver? _resolver;
   XmavApi? api;
+  XmavServer? server;
 
   bool ready = false;
   bool resolvingBase = false;
@@ -24,13 +26,11 @@ class XmavController extends ChangeNotifier {
 
   List<XmavCategory> categories = List<XmavCategory>.from(xmavFallbackCategories);
 
-  // latest
   bool latestLoading = false;
   List<XmavVideoItem> latestItems = const [];
   int latestPage = 1;
   int latestPageCount = 1;
 
-  // category
   int? selectedTid;
   String selectedCategoryName = '';
   bool categoryLoading = false;
@@ -38,7 +38,6 @@ class XmavController extends ChangeNotifier {
   int categoryPage = 1;
   int categoryPageCount = 1;
 
-  // search
   String searchKeyword = '';
   bool searchLoading = false;
   List<XmavVideoItem> searchItems = const [];
@@ -57,6 +56,8 @@ class XmavController extends ChangeNotifier {
       _resolver = XmavBaseResolver(http: http, store: _store!);
       base = await _resolver!.resolve(force: false);
       api = XmavApi(http: http, base: base);
+      server = XmavServer(http: http, siteBase: base);
+      await server!.start();
       categories = await api!.loadCategories();
       ready = true;
       resolvingBase = false;
@@ -81,6 +82,12 @@ class XmavController extends ChangeNotifier {
     try {
       base = await _resolver!.resolve(force: force);
       api = XmavApi(http: http, base: base);
+      if (server != null) {
+        server!.siteBase = base;
+      } else {
+        server = XmavServer(http: http, siteBase: base);
+        await server!.start();
+      }
       categories = await api!.loadCategories();
       ready = true;
       resolvingBase = false;
@@ -131,6 +138,8 @@ class XmavController extends ChangeNotifier {
   Future<void> openCategory(XmavCategory cat) async {
     selectedTid = cat.tid;
     selectedCategoryName = cat.name;
+    categoryItems = const [];
+    notifyListeners();
     await loadCategory(cat.tid, page: 1);
   }
 
@@ -140,7 +149,13 @@ class XmavController extends ChangeNotifier {
     lastError = null;
     notifyListeners();
     try {
-      final result = await api!.list(page: page, limit: 20, tid: tid);
+      final result = await api!.list(
+        page: page,
+        limit: 40,
+        tid: tid,
+        strictTypeId: tid,
+        fillPages: 4,
+      );
       categoryItems = result.items;
       categoryPage = result.page;
       categoryPageCount = result.pageCount < 1 ? 1 : result.pageCount;
@@ -199,11 +214,21 @@ class XmavController extends ChangeNotifier {
   }
 
   Future<XmavPlayback> fetchPlayback(int vodId) {
-    if (api == null) throw StateError('Xmav 未就绪');
+    if (api == null) throw StateError('Xmav not ready');
     return api!.resolvePlayback(vodId, sid: 1, nid: 1);
   }
 
+  String proxiedPlay(String upstreamUrl) {
+    final s = server;
+    if (s == null) return upstreamUrl;
+    return s.resolvePlayableProxyUrl(upstreamUrl);
+  }
+
   Future<void> disposeModule() async {
+    try {
+      await server?.stop();
+    } catch (_) {}
+    server = null;
     try {
       http.close();
     } catch (_) {}
