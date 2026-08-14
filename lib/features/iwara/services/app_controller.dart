@@ -619,13 +619,14 @@ class AppController extends ChangeNotifier {
     // Official site uses plural types: videos / users / images.
     // Singular (video/user/image) returns errors.serverError.
     final normalizedType = _normalizeSearchType(type);
+    final normalizedSort = _normalizeSearchSort(sort);
     try {
       return await callApi('fetchSearchResults', query: {
         'type': normalizedType,
         'query': q,
         'limit': limit,
         'page': page,
-        'sort': sort,
+        'sort': normalizedSort,
       });
     } catch (e) {
       if (!_isSearchUpstreamFailure(e)) rethrow;
@@ -700,7 +701,7 @@ class AppController extends ChangeNotifier {
       );
     }
 
-    final videoSort = sort == 'newest' ? 'date' : sort;
+    final videoSort = (sort == 'relevance' || sort == 'trending') ? 'date' : (sort == 'newest' ? 'date' : sort);
     Object? lastError;
     for (final tagId in tagIds) {
       try {
